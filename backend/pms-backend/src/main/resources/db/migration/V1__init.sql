@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS app_example
+(   id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+    );
