@@ -1,24 +1,17 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/pms
-    username: pms
-    password: pms
-
   jpa:
-    hibernate:
-      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
 
-  flyway:
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
     enabled: true
 
-server:
-  port: 8080
-
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
   endpoint:
     health:
       show-details: always

@@ -1,9 +1,27 @@
 HELP.md
-.gradle
+
+# Gradle
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+# Logs
+logs/
+*.log
+
+# Local env (never commit)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Test reports / coverage
+reports/
+test-results/
+coverage/
 
 ### STS ###
 .apt_generated

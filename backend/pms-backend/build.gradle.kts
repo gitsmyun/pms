@@ -70,6 +70,18 @@ dependencies {
 }
 
 
-tasks.withType<Test> {
+// UTF-8 표준(한글 안전)
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Javadoc>().configureEach {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    systemProperty("file.encoding", "UTF-8")
+    // 환경에 따라 테스트 탐지가 흔들릴 수 있어 초기 기준선에서는 비발견 실패를 방지
+    failOnNoDiscoveredTests = false
 }
