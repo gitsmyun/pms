@@ -85,14 +85,14 @@ jobs:
             const base = 'develop'
             const head = `${{ steps.branch.outputs.branch }}`
 
-            const title = `promote ${'{'}{ inputs.image_tag }${'}'} to ${'{'}{ inputs.to_env }${'}'}`
+            const title = `promote: ${{ inputs.image_tag }} to ${{ inputs.to_env }}`
             const body = [
               '작성일 2026 01 08',
               '작업자 윤성민',
               '설명 이 풀리퀘스트는 동일 이미지 승격 원칙에 따라 환경별 배포 기준 파일을 업데이트한다',
               '설명 브랜치 룰셋으로 직접 푸시는 금지되어 있으므로 승격 변경은 풀리퀘스트로만 반영한다',
-              `설명 from ${'{'}{ inputs.from_env }${'}'} to ${'{'}{ inputs.to_env }${'}'}`,
-              `설명 image ${'{'}{ inputs.image_tag }${'}'}`
+              `설명 from ${{ inputs.from_env }} to ${{ inputs.to_env }}`,
+              `설명 image ${{ inputs.image_tag }}`
             ].join('\n')
 
             const existing = await github.paginate(github.rest.pulls.list, {
