@@ -1,8 +1,9 @@
 # 작성일 2026 01 08
 # 작업자 윤성민
 # 설명 이 워크플로우는 로컬 개발 시험 운영 배포 단계 중 개발에서 시험으로 시험에서 운영으로 승격을 수행하기 위한 수동 트리거 워크플로우이다
-# 설명 동일 이미지 승격 원칙을 따르기 위해 입력받은 sha 태그를 기준으로 배포 매니페스트 또는 설정 값을 업데이트하는 방식을 전제로 한다
-# 설명 실제 클러스터 적용은 GitOps 도구를 사용하거나 향후 helm kubectl 단계로 확장할 수 있다
+# 설명 동일 이미지 승격 원칙을 따르기 위해 입력받은 sha 태그를 기준으로 환경별 배포 기준 파일을 업데이트한다
+# 설명 브랜치 룰셋에서 직접 push를 금지하므로 승격 변경은 별도 브랜치로 커밋하고 pull request를 생성하는 방식으로 운영한다
+# 설명 시험과 운영 승격은 GitHub environments 승인 게이트를 통해 변경 통제와 감사 추적이 가능하도록 한다
 
 name: Promote Image
 
@@ -30,11 +31,13 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   promote:
     name: Promote metadata
     runs-on: ubuntu-latest
+    environment: ${{ inputs.to_env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,11 +56,29 @@ jobs:
           mkdir -p k8s/manifests/${{ inputs.to_env }}
           echo "${{ inputs.image_tag }}" > k8s/manifests/${{ inputs.to_env }}/IMAGE_TAG
 
-      - name: Commit and push
+      - name: Create promotion branch
+        id: branch
+        run: |
+          BRANCH="promote/${{ inputs.to_env }}/${{ inputs.image_tag }}"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          git checkout -b "$BRANCH"
+
+      - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add k8s/manifests/${{ inputs.to_env }}/IMAGE_TAG
-          git commit -m "promote: ${{ inputs.image_tag }} to ${{ inputs.to_env }}" || echo "no changes"
-          git push
+          git commit -m "promote: ${{ inputs.image_tag }} to ${{ inputs.to_env }}"
 
+      - name: Push promotion branch
+        run: git push --set-upstream origin "${{ steps.branch.outputs.branch }}"
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "promote: ${{ inputs.image_tag }} to ${{ inputs.to_env }}" \
+            --body "작성일 2026 01 08\n작업자 윤성민\n설명 이 풀리퀘스트는 동일 이미지 승격 원칙에 따라 환경별 배포 기준 파일을 업데이트한다\n설명 from ${{ inputs.from_env }} to ${{ inputs.to_env }}\n설명 image ${{ inputs.image_tag }}" \
+            --base develop \
+            --head "${{ steps.branch.outputs.branch }}"
