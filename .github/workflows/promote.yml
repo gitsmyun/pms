@@ -61,7 +61,25 @@ jobs:
       - name: Create promotion branch
         id: branch
         run: |
-          BRANCH="promote/${{ inputs.to_env }}/${{ inputs.image_tag }}"
+          BASE_BRANCH="promote/${{ inputs.to_env }}/${{ inputs.image_tag }}"
+          BRANCH="$BASE_BRANCH-${{ github.run_id }}"
+
+          # 동일 입력으로 재실행하거나 이전에 같은 run_id 브랜치가 존재하는 경우를 대비한다
+          # 원격에 이미 존재하면 run_attempt 값을 포함해 브랜치명을 더 고유하게 만든다
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            BRANCH="$BASE_BRANCH-${{ github.run_id }}-${{ github.run_attempt }}"
+          fi
+
+          # 극히 드물게 여전히 충돌하면 숫자를 증가시키며 한번 더 보강한다
+          i=0
+          while git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; do
+            i=$((i+1))
+            BRANCH="$BASE_BRANCH-${{ github.run_id }}-${{ github.run_attempt }}-$i"
+            if [ $i -ge 10 ]; then
+              echo "branch name collision"; exit 1;
+            fi
+          done
+
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
           git checkout -b "$BRANCH"
 
