@@ -1,0 +1,63 @@
+# 작성일 2026 01 08
+# 작업자 윤성민
+# 설명 이 워크플로우는 로컬 개발 시험 운영 배포 단계 중 개발에서 시험으로 시험에서 운영으로 승격을 수행하기 위한 수동 트리거 워크플로우이다
+# 설명 동일 이미지 승격 원칙을 따르기 위해 입력받은 sha 태그를 기준으로 배포 매니페스트 또는 설정 값을 업데이트하는 방식을 전제로 한다
+# 설명 실제 클러스터 적용은 GitOps 도구를 사용하거나 향후 helm kubectl 단계로 확장할 수 있다
+
+name: Promote Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_env:
+        description: "source environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+      to_env:
+        description: "target environment"
+        required: true
+        type: choice
+        options:
+          - test
+          - prod
+      image_tag:
+        description: "image tag to promote, example sha-abc123"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    name: Promote metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate promotion flow
+        run: |
+          if [ "${{ inputs.from_env }}" = "dev" ] && [ "${{ inputs.to_env }}" != "test" ]; then
+            echo "invalid promotion"; exit 1;
+          fi
+          if [ "${{ inputs.from_env }}" = "test" ] && [ "${{ inputs.to_env }}" != "prod" ]; then
+            echo "invalid promotion"; exit 1;
+          fi
+
+      - name: Write promoted version file
+        run: |
+          mkdir -p k8s/manifests/${{ inputs.to_env }}
+          echo "${{ inputs.image_tag }}" > k8s/manifests/${{ inputs.to_env }}/IMAGE_TAG
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add k8s/manifests/${{ inputs.to_env }}/IMAGE_TAG
+          git commit -m "promote: ${{ inputs.image_tag }} to ${{ inputs.to_env }}" || echo "no changes"
+          git push
+
