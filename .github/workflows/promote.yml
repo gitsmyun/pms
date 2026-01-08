@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Validate promotion flow
         run: |
@@ -79,6 +81,6 @@ jobs:
         run: |
           gh pr create \
             --title "promote: ${{ inputs.image_tag }} to ${{ inputs.to_env }}" \
-            --body "작성일 2026 01 08\n작업자 윤성민\n설명 이 풀리퀘스트는 동일 이미지 승격 원칙에 따라 환경별 배포 기준 파일을 업데이트한다\n설명 from ${{ inputs.from_env }} to ${{ inputs.to_env }}\n설명 image ${{ inputs.image_tag }}" \
+            --body "작성일 2026 01 08\n작업자 윤성민\n설명 이 풀리퀘스트는 동일 이미지 승격 원칙에 따라 환경별 배포 기준 파일을 업데이트한다\n설명 브랜치 룰셋으로 직접 push는 금지되어 있으므로 승격 변경은 PR로만 반영한다\n설명 from ${{ inputs.from_env }} to ${{ inputs.to_env }}\n설명 image ${{ inputs.image_tag }}" \
             --base develop \
             --head "${{ steps.branch.outputs.branch }}"
