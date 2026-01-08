@@ -1,0 +1,43 @@
+# 작성일 2026 01 08
+# 작업자 윤성민
+# 설명 이 워크플로우는 도커가 필요한 통합 테스트를 기업형 권장 방식으로 분리하여 실행한다
+# 설명 기본 CI는 빠른 피드백을 위해 단위 테스트와 빌드만 수행하고 이 워크플로우는 별도 트리거에서만 실행한다
+# 설명 통합 테스트는 Testcontainers로 Postgres를 기동하고 스프링 부트 컨텍스트와 마이그레이션을 포함한 동작을 검증한다
+# 설명 pull request에서는 선택적으로 실행할 수 있고 develop 브랜치에 머지된 후에는 주기적으로 실행하여 회귀를 조기에 발견한다
+
+name: Integration CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    - cron: "0 3 * * *"
+
+concurrency:
+  group: integration-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-integration:
+    name: Backend Integration Tests (Testcontainers)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/pms-backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Run integration tests
+        run: ./gradlew integrationTest
+

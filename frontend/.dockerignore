@@ -1,0 +1,16 @@
+# 작성일 2026 01 08
+# 작업자 윤성민
+# 설명 이 파일은 프론트엔드 이미지 빌드 컨텍스트에 포함되지 않아야 할 파일과 디렉토리를 정의한다
+# 설명 로컬 node modules 및 개발 도구 설정을 제외하여 이미지 빌드 속도와 캐시 효율을 개선한다
+# 설명 민감할 수 있는 개발 환경 파일과 불필요한 대용량 파일을 제외하여 기업 환경에서 빌드 비용을 줄인다
+
+node_modules
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+pnpm-store
+.DS_Store
+.git
+.vscode
+.idea
+

@@ -61,10 +61,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-    // Testcontainers는 "도커 준비된 이후"에 다시 켜는 걸 권장
-    // testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    // testImplementation("org.testcontainers:junit-jupiter")
-    // testImplementation("org.testcontainers:postgresql")
+    // --- Integration Tests (Testcontainers) ---
+    testImplementation(platform("org.testcontainers:testcontainers-bom:1.20.4"))
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -85,3 +86,26 @@ tasks.withType<Test>().configureEach {
     // 환경에 따라 테스트 탐지가 흔들릴 수 있어 초기 기준선에서는 비발견 실패를 방지
     failOnNoDiscoveredTests = false
 }
+
+// 통합 테스트 소스셋 분리
+val integrationTest by sourceSets.creating {
+    java.srcDir("src/integrationTest/java")
+    resources.srcDir("src/integrationTest/resources")
+    compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath.get()
+    runtimeClasspath += output + compileClasspath
+}
+
+configurations[integrationTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
+configurations[integrationTest.runtimeOnlyConfigurationName].extendsFrom(configurations.testRuntimeOnly.get())
+
+val integrationTestTask = tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+    testClassesDirs = integrationTest.output.classesDirs
+    classpath = integrationTest.runtimeClasspath
+    useJUnitPlatform()
+    systemProperty("file.encoding", "UTF-8")
+}
+
+// 기본 check에는 통합 테스트를 포함하지 않습니다.
+// 통합 테스트는 도커가 가능한 환경에서만 별도 실행하는 것을 기본 전략으로 합니다.
