@@ -18,7 +18,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER_PROD:-pms}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PROD:-pms}
     volumes:
-      - postgres-prod-data:/var/lib/postgresql/data
+      # 설명 Postgres 18 이상은 /var/lib/postgresql 아래에 마운트하고 데이터는 하위 디렉터리에 저장하는 구성이 권장된다
+      - postgres-prod-data:/var/lib/postgresql
 
   backend:
     image: ${BACKEND_IMAGE:-ghcr.io/${REPO_OWNER:-gitsmyun}/pms-backend}:${BACKEND_TAG_PROD:-sha-latest}
@@ -45,4 +46,3 @@ services:
 
 volumes:
   postgres-prod-data:
-

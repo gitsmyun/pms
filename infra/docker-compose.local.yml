@@ -1,16 +1,48 @@
+# 작성일 2026 01 09
+# 작업자 윤성민
+# 설명 이 파일은 로컬 PC에서 절차 검증을 위해 local 환경을 컨테이너 기반으로 구성하기 위한 Docker Compose 파일이다
+# 설명 기존에는 로컬 개발 편의를 위해 DB만 기동했으나 절차 검증에서는 dev test prod와 동일한 패턴으로 backend frontend db를 컨테이너로 기동한다
+# 설명 로컬 개발 스크립트(dev.ps1)는 필요 시 이 파일을 사용하거나 별도 방식으로 Vite 개발 서버를 실행할 수 있다
+# 설명 dev test prod 환경과 동시에 실행할 수 있도록 기본 포트와 볼륨 이름을 분리한다
+# 설명 향후 Kubernetes 전환 시에도 동일 서비스 단위를 유지하여 전환 변경을 최소화한다
+
 services:
   postgres:
     image: postgres:18
-    container_name: pms-postgres
+    container_name: pms-local-postgres
     restart: unless-stopped
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_PORT_LOCAL:-5433}:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-pms}
-      POSTGRES_USER: ${POSTGRES_USER:-pms}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pms}
+      POSTGRES_DB: ${POSTGRES_DB_LOCAL:-pms}
+      POSTGRES_USER: ${POSTGRES_USER_LOCAL:-pms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_LOCAL:-pms}
     volumes:
-      - postgres-data:/var/lib/postgresql
+      # 설명 Postgres 18 이상은 /var/lib/postgresql 아래에 마운트하고 데이터는 하위 디렉터리에 저장하는 구성이 권장된다
+      - postgres-local-data:/var/lib/postgresql
+
+  backend:
+    image: ${BACKEND_IMAGE_LOCAL:-pms-backend}:${BACKEND_TAG_LOCAL:-local}
+    container_name: pms-local-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - "${BACKEND_PORT_LOCAL:-9080}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE_LOCAL:-local}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_LOCAL:-jdbc:postgresql://postgres:5432/pms}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME_LOCAL:-pms}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD_LOCAL:-pms}
+
+  frontend:
+    image: ${FRONTEND_IMAGE_LOCAL:-pms-frontend}:${FRONTEND_TAG_LOCAL:-local}
+    container_name: pms-local-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT_LOCAL:-9081}:80"
 
 volumes:
-  postgres-data:
+  postgres-local-data:
