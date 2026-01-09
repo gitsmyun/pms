@@ -9,40 +9,17 @@
 services:
   postgres:
     image: postgres:18
-    container_name: pms-local-postgres
+    container_name: pms-postgres
     restart: unless-stopped
     ports:
-      - "${DB_PORT_LOCAL:-5433}:5432"
+      - "${DB_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB_LOCAL:-pms}
-      POSTGRES_USER: ${POSTGRES_USER_LOCAL:-pms}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_LOCAL:-pms}
+      POSTGRES_DB: ${POSTGRES_DB:-pms}
+      POSTGRES_USER: ${POSTGRES_USER:-pms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pms}
     volumes:
       # 설명 Postgres 18 이상은 /var/lib/postgresql 아래에 마운트하고 데이터는 하위 디렉터리에 저장하는 구성이 권장된다
-      - postgres-local-data:/var/lib/postgresql
-
-  backend:
-    image: ${BACKEND_IMAGE_LOCAL:-pms-backend}:${BACKEND_TAG_LOCAL:-local}
-    container_name: pms-local-backend
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    ports:
-      - "${BACKEND_PORT_LOCAL:-9080}:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE_LOCAL:-local}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_LOCAL:-jdbc:postgresql://postgres:5432/pms}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME_LOCAL:-pms}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD_LOCAL:-pms}
-
-  frontend:
-    image: ${FRONTEND_IMAGE_LOCAL:-pms-frontend}:${FRONTEND_TAG_LOCAL:-local}
-    container_name: pms-local-frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-    ports:
-      - "${FRONTEND_PORT_LOCAL:-9081}:80"
+      - postgres-data:/var/lib/postgresql
 
 volumes:
-  postgres-local-data:
+  postgres-data:

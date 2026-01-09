@@ -29,10 +29,10 @@ function Write-Step([string]$msg) {
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $infraDir = Join-Path $repoRoot 'infra'
-$composeFile = Join-Path $infraDir 'docker-compose.local-db.yml'
+$composeFile = Join-Path $infraDir 'docker-compose.local.yml'
 
 if (-not (Test-Path $composeFile)) {
-  throw "docker-compose.local-db.yml을 찾을 수 없습니다: $composeFile"
+  throw "docker-compose.local.yml을 찾을 수 없습니다: $composeFile"
 }
 
 Write-Step "(DB) Postgres 컨테이너 중지"
