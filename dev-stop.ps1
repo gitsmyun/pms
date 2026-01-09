@@ -1,5 +1,6 @@
 param(
-  [switch]$KeepVolumes
+  [switch]$KeepVolumes,
+  [switch]$RemoveVolumes
 )
 
 # IntelliJ Terminal/PowerShell 출력 인코딩 이슈 완화
@@ -37,10 +38,11 @@ if (-not (Test-Path $composeFile)) {
 Write-Step "(DB) Postgres 컨테이너 중지"
 Push-Location $infraDir
 try {
-  if ($KeepVolumes) {
-    docker compose -p localdb -f $composeFile down | Out-Host
-  } else {
+  if ($RemoveVolumes) {
     docker compose -p localdb -f $composeFile down -v | Out-Host
+  } else {
+    # 설명 기본 동작은 로컬 개발 데이터 보존을 위해 볼륨을 유지한다
+    docker compose -p localdb -f $composeFile down | Out-Host
   }
 } finally {
   Pop-Location
