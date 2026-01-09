@@ -1,0 +1,24 @@
+# 작성일 2026 01 09
+# 작업자 윤성민
+# 설명 이 파일은 로컬 개발 시 IntelliJ에서 백엔드를 실행하고 프론트는 Vite 개발 서버를 사용할 때 필요한 DB만 제공한다
+# 설명 로컬 개발용 DB는 외부 배포 환경과 달리 단일 postgres만 기동하며 빠른 개발과 디버깅을 우선한다
+# 설명 절차 검증용 local dev test prod full stack 구동은 infra/docker-compose.local.yml 및 dev test prod compose 파일로 수행한다
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: pms-postgres
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pms}
+      POSTGRES_USER: ${POSTGRES_USER:-pms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pms}
+    volumes:
+      # 설명 Postgres 18 이상은 /var/lib/postgresql 아래에 마운트하고 데이터는 하위 디렉터리에 저장하는 구성이 권장된다
+      - postgres-data:/var/lib/postgresql
+
+volumes:
+  postgres-data:
+
