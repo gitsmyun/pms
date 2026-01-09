@@ -12,7 +12,7 @@ services:
     container_name: pms-prod-postgres
     restart: unless-stopped
     ports:
-      - "${DB_PORT_PROD:-7432}:5432"
+      - "${DB_PORT_PROD:-5562}:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB_PROD:-pms}
       POSTGRES_USER: ${POSTGRES_USER_PROD:-pms}

@@ -11,7 +11,7 @@ services:
     container_name: pms-test-postgres
     restart: unless-stopped
     ports:
-      - "${DB_PORT_TEST:-6432}:5432"
+      - "${DB_PORT_TEST:-5552}:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB_TEST:-pms}
       POSTGRES_USER: ${POSTGRES_USER_TEST:-pms}

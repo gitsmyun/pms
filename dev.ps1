@@ -31,7 +31,7 @@ if (-not $NoDb) {
 
   Push-Location $infraDir
   try {
-    docker compose -p localdb -f $composeFile up -d
+    docker compose -p pms_local -f $composeFile up -d
   } finally {
     Pop-Location
   }

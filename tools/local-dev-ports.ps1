@@ -9,6 +9,7 @@ param(
 # 설명 이 스크립트는 로컬 개발 시 IntelliJ 백엔드 포트와 Vite 개발 서버 포트 그리고 DB 포트의 충돌 여부를 빠르게 확인한다
 # 설명 Docker Desktop 환경에서는 컨테이너 포트 점유도 호스트 포트 점유로 보이므로 netstat 기반으로 검사한다
 # 설명 충돌이 있으면 어떤 PID가 점유 중인지 출력하여 어떤 컨테이너나 프로세스를 내려야 하는지 판단할 수 있게 한다
+# 설명 표준 환경과 프로젝트 이름은 pms_local pms_dev pms_test pms_prod 이며 포트는 local을 기준으로 dev test prod 순으로 증가하도록 구성한다
 
 $ErrorActionPreference = 'Stop'
 

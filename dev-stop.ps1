@@ -39,10 +39,10 @@ Write-Step "(DB) Postgres 컨테이너 중지"
 Push-Location $infraDir
 try {
   if ($RemoveVolumes) {
-    docker compose -p localdb -f $composeFile down -v | Out-Host
+    docker compose -p pms_local -f $composeFile down -v | Out-Host
   } else {
     # 설명 기본 동작은 로컬 개발 데이터 보존을 위해 볼륨을 유지한다
-    docker compose -p localdb -f $composeFile down | Out-Host
+    docker compose -p pms_local -f $composeFile down | Out-Host
   }
 } finally {
   Pop-Location
