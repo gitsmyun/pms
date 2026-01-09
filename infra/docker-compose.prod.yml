@@ -1,0 +1,48 @@
+# 작성일 2026 01 09
+# 작업자 윤성민
+# 설명 이 파일은 로컬 PC에서 prod 환경을 절차 검증용으로 구성하기 위한 Docker Compose 파일이다
+# 설명 실제 운영은 별도 인프라에서 수행해야 하지만 로컬에서 승격 원칙과 포트 충돌 여부를 검증하기 위해 환경을 분리한다
+# 설명 dev test 환경과 동일한 컨테이너 단위를 유지하되 포트와 볼륨 이름을 분리하여 동시에 실행할 수 있도록 한다
+# 설명 이미지 태그는 BACKEND_TAG FRONTEND_TAG 로 주입하며 동일 이미지 승격 원칙을 검증할 수 있도록 한다
+# 설명 향후 Kubernetes 전환 시에도 backend frontend db 단위를 유지하여 매니페스트 전환 변경을 최소화한다
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: pms-prod-postgres
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT_PROD:-7432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_PROD:-pms}
+      POSTGRES_USER: ${POSTGRES_USER_PROD:-pms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PROD:-pms}
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/${REPO_OWNER:-gitsmyun}/pms-backend}:${BACKEND_TAG_PROD:-sha-latest}
+    container_name: pms-prod-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - "${BACKEND_PORT_PROD:-8280}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE_PROD:-prod}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_PROD:-jdbc:postgresql://postgres:5432/pms}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME_PROD:-pms}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD_PROD:-pms}
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/${REPO_OWNER:-gitsmyun}/pms-frontend}:${FRONTEND_TAG_PROD:-sha-latest}
+    container_name: pms-prod-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT_PROD:-8281}:80"
+
+volumes:
+  postgres-prod-data:
+
