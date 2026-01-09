@@ -1,0 +1,71 @@
+# 작성일 2026 01 09
+# 작업자 윤성민
+# 설명 이 워크플로우는 dev 서버가 준비된 이후 develop 브랜치 병합 시 자동으로 dev 서버에 배포를 수행하기 위한 스캐폴딩이다
+# 설명 현재는 dev 서버가 없으므로 실제 배포 단계는 기본적으로 비활성 상태이며 workflow_dispatch로만 실행하도록 한다
+# 설명 dev 서버가 준비되면 GitHub Actions Secrets에 DEV_SSH_HOST DEV_SSH_USER DEV_SSH_KEY 등을 등록하고 deploy_enabled 입력을 true로 두어 실행한다
+# 설명 배포 방식은 Docker Compose 기반이며 서버에서 GHCR 이미지를 pull 한 뒤 compose up 으로 롤아웃한다
+# 설명 향후 Kubernetes 전환 시에는 이 워크플로우를 Argo CD 또는 kubectl apply 기반 배포로 대체하되 이미지 태그 관리 방식은 유지한다
+
+name: Dev Deploy (Docker Compose)
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend_tag:
+        description: "backend image tag to deploy example sha-abc123"
+        required: true
+        type: string
+      frontend_tag:
+        description: "frontend image tag to deploy example sha-abc123"
+        required: true
+        type: string
+      deploy_enabled:
+        description: "set true only after dev server is ready"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to dev server
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Guard
+        run: |
+          if [ "${{ inputs.deploy_enabled }}" != "true" ]; then
+            echo "작성일 2026 01 09"
+            echo "작업자 윤성민"
+            echo "설명 dev 서버가 아직 준비되지 않았으므로 실제 배포를 수행하지 않고 종료한다"
+            echo "설명 dev 서버 준비 후 deploy_enabled 를 true 로 설정하고 secrets 를 등록해야 한다"
+            exit 0
+          fi
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT != '' && secrets.DEV_SSH_PORT || '22' }}
+          # 설명 IDE가 액션 입력 스키마를 알지 못하면 경고를 표시할 수 있으나 GitHub Actions 실행에는 영향이 없다
+          script_stop: true
+          script: |
+            set -e
+            echo "작성일 2026 01 09"
+            echo "작업자 윤성민"
+            echo "설명 dev 서버의 배포 디렉터리에서 docker compose pull 및 up 을 수행한다"
+            cd ${{ secrets.DEV_DEPLOY_PATH }}
+
+            export REPO_OWNER='${{ github.repository_owner }}'
+            export BACKEND_TAG='${{ inputs.backend_tag }}'
+            export FRONTEND_TAG='${{ inputs.frontend_tag }}'
+
+            docker compose -f infra/docker-compose.dev.yml pull
+            docker compose -f infra/docker-compose.dev.yml up -d

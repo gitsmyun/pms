@@ -1,0 +1,48 @@
+# 작성일 2026 01 09
+# 작업자 윤성민
+# 설명 이 파일은 PMS2의 dev 서버 배포를 위한 Docker Compose 구성이다
+# 설명 백엔드와 프론트엔드는 GitHub Actions가 GHCR에 발행한 이미지 태그를 사용하며 동일 이미지 승격 원칙을 위해 이미지 태그를 환경 변수로 주입한다
+# 설명 현재는 dev 서버가 없으므로 로컬 또는 향후 dev 서버에서 동일 구성을 사용할 수 있도록 작성한다
+# 설명 향후 Kubernetes 전환 시에도 서비스 단위를 backend frontend db로 유지하여 매니페스트 전환이 최소 수정으로 가능하도록 한다
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: pms-postgres
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_POSTGRES_DB:-pms}
+      POSTGRES_USER: ${POSTGRES_USER:-pms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pms}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/${REPO_OWNER:-gitsmyun}/pms-backend}:${BACKEND_TAG:-sha-latest}
+    container_name: pms-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      # 설명 예시 값이며 실제 키는 백엔드 설정에 맞게 추후 정리한다
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/pms}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-pms}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-pms}
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/${REPO_OWNER:-gitsmyun}/pms-frontend}:${FRONTEND_TAG:-sha-latest}
+    container_name: pms-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8081}:80"
+
+volumes:
+  postgres-data:
+
