@@ -21,8 +21,10 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 1
 fi
 
-docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" pull
-docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d
+# 설명 env 파일은 보안상 root 소유자 600으로 두는 경우가 많으므로 docker compose를 sudo로 실행한다
+# 설명 사용자 권한으로 실행하고 싶다면 env 파일의 소유자와 권한을 조정해야 한다
+DOCKER_COMPOSE=(sudo docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE")
 
-docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps
-
+"${DOCKER_COMPOSE[@]}" pull
+"${DOCKER_COMPOSE[@]}" up -d
+"${DOCKER_COMPOSE[@]}" ps
