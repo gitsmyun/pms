@@ -1,0 +1,17 @@
+# 작성일 2026 01 12
+# 작업자 윤성민 책임
+# 설명 이 유닛 파일은 PMS2 dev 서버에서 배포 service를 주기 또는 특정 시간 기준으로 자동 실행하기 위한 systemd timer 정의이다
+# 설명 기본 예시는 서버 기동 후 2분 뒤 첫 실행 후 10분마다 실행되도록 구성한다
+# 설명 특정 시간 배포가 필요하면 OnCalendar로 전환하고 주기 배포는 해제한다
+
+[Unit]
+Description=PMS2 dev deploy schedule
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

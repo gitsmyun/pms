@@ -1,0 +1,20 @@
+# 작성일 2026 01 12
+# 작업자 윤성민 책임
+# 설명 이 유닛 파일은 PMS2 dev 서버에서 배포 스크립트를 oneshot 형태로 실행하기 위한 systemd service 정의이다
+# 설명 배포는 pull 기반이며 docker compose pull 및 up -d를 수행한다
+# 설명 실제 서버에서는 User와 Group을 서버 정책에 맞게 조정하고 docker 그룹 권한을 사용하도록 구성한다
+
+[Unit]
+Description=PMS2 dev deploy pull and restart
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=pms
+Group=docker
+ExecStart=/opt/pms/dev/scripts/deploy-dev.sh
+
+[Install]
+WantedBy=multi-user.target
+
