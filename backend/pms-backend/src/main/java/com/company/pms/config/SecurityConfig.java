@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @since 2026-01-05
  */
 @Configuration
-@Profile("local")
+@Profile({"local", "dev"})
 public class SecurityConfig {
 
     @Bean
