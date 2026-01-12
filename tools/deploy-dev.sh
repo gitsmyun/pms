@@ -7,6 +7,8 @@ set -euo pipefail
 # 설명 배포 방식은 pull 기반이며 GHCR에 올라간 이미지를 docker compose pull로 가져온 뒤 docker compose up -d로 재기동한다
 # 설명 동일 이미지 승격 원칙을 위해 태그는 env 파일에서 주입되며 dev 환경에서는 develop latest 같은 고정 태그를 사용해 자동 배포 편의성을 높인다
 # 설명 이 스크립트는 시스템 상태를 변경하며 성공 여부는 exit code로 판단할 수 있도록 설계한다
+# 설명 정석 운영 모델에서는 전용 실행 계정 pms가 docker 그룹에 포함되어 docker를 직접 실행한다
+# 설명 env 파일은 root 소유로 두되 group을 docker로 설정하고 640 권한을 부여해 pms가 읽을 수 있게 한다
 
 PROJECT_NAME="${PROJECT_NAME:-pms_dev}"
 COMPOSE_FILE="${COMPOSE_FILE:-/opt/pms/dev/compose/docker-compose.dev.yml}"
@@ -21,10 +23,6 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 1
 fi
 
-# 설명 env 파일은 보안상 root 소유자 600으로 두는 경우가 많으므로 docker compose를 sudo로 실행한다
-# 설명 사용자 권한으로 실행하고 싶다면 env 파일의 소유자와 권한을 조정해야 한다
-DOCKER_COMPOSE=(sudo docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE")
-
-"${DOCKER_COMPOSE[@]}" pull
-"${DOCKER_COMPOSE[@]}" up -d
-"${DOCKER_COMPOSE[@]}" ps
+docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" pull
+docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d
+docker compose -p "$PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps
