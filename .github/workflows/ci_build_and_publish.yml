@@ -1,0 +1,126 @@
+name: ci build and publish
+
+# 작성일 2026 01 12
+# 작업자 윤성민 책임
+# 설명 이 워크플로우는 PMS2의 CI 파이프라인으로 develop 브랜치 머지 시 백엔드와 프론트엔드를 빌드 테스트하고 도커 이미지를 GHCR에 푸시한다
+# 설명 dev 자동 배포 편의성을 위해 커밋 sha 태그와 함께 develop latest 고정 태그를 함께 발행한다
+# 설명 test prod 승격은 별도 승격 절차로 수행하며 본 워크플로우는 dev 배포를 위한 이미지 발행까지만 책임진다
+
+"on":
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - develop
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: backend build test and publish
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/pms-backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Gradle test
+        run: ./gradlew test --no-daemon
+
+      - name: Derive tags
+        id: tags
+        shell: bash
+        run: |
+          echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "sha_tag=sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "develop_tag=develop-latest" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend/pms-backend
+          file: backend/pms-backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pms-backend:${{ steps.tags.outputs.sha_tag }}
+            ghcr.io/${{ github.repository_owner }}/pms-backend:${{ steps.tags.outputs.develop_tag }}
+
+  frontend:
+    name: frontend build and publish
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Frontend build
+        run: pnpm build
+
+      - name: Derive tags
+        id: tags
+        shell: bash
+        run: |
+          echo "sha_tag=sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "develop_tag=develop-latest" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          file: frontend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pms-frontend:${{ steps.tags.outputs.sha_tag }}
+            ghcr.io/${{ github.repository_owner }}/pms-frontend:${{ steps.tags.outputs.develop_tag }}
