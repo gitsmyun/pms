@@ -13,9 +13,9 @@ services:
     ports:
       - "${DB_PORT_DEV:-5542}:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_POSTGRES_DB:-pms}
-      POSTGRES_USER: ${POSTGRES_USER:-pms}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pms}
+      POSTGRES_DB: ${POSTGRES_DB_DEV:-pms}
+      POSTGRES_USER: ${POSTGRES_USER_DEV:-pms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV:-pms}
     volumes:
       # 설명 Postgres 18 이상은 /var/lib/postgresql 아래에 마운트하고 데이터는 하위 디렉터리에 저장하는 구성이 권장된다
       - postgres-dev-data:/var/lib/postgresql
@@ -30,10 +30,12 @@ services:
       - "${BACKEND_PORT_DEV:-8080}:8080"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE_DEV:-dev}
-      # 설명 예시 값이며 실제 키는 백엔드 설정에 맞게 추후 정리한다
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/pms}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-pms}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-pms}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-pms}
+      DB_USER: ${DB_USER:-pms}
+      DB_PASSWORD: ${DB_PASSWORD:-pms}
+      SERVER_PORT: ${SERVER_PORT:-8080}
 
   frontend:
     image: ${FRONTEND_IMAGE:-ghcr.io/${REPO_OWNER:-gitsmyun}/pms-frontend}:${FRONTEND_TAG:-sha-latest}

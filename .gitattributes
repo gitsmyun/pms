@@ -1,0 +1,15 @@
+# 작성일 2026 01 12
+# 작업자 윤성민 책임
+# 설명 이 파일은 PMS2 저장소에서 플랫폼에 따라 줄바꿈이 달라져 배포 스크립트 실행이 실패하는 문제를 방지하기 위한 설정이다
+# 설명 bash 스크립트와 systemd 유닛 파일은 리눅스에서 실행되므로 LF 줄바꿈을 강제하여 CRLF로 인한 실행 오류를 예방한다
+
+# bash scripts must be LF
+*.sh text eol=lf
+
+# systemd unit files should be LF
+*.service text eol=lf
+*.timer text eol=lf
+
+# workflow files should be LF
+.github/workflows/* text eol=lf
+
