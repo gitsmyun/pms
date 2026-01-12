@@ -90,27 +90,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Enable corepack
         shell: bash
         run: corepack enable
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: '10'
-
-      - name: Configure pnpm store
+      - name: Activate pnpm
         shell: bash
-        run: pnpm config set store-dir ~/.pnpm-store
+        run: corepack prepare pnpm@10.27.0 --activate
 
-      - name: Restore pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('frontend/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+      - name: Verify pnpm
+        shell: bash
+        run: pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
