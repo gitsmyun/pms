@@ -36,7 +36,11 @@ jobs:
 
       - name: Ensure gradlew is executable
         shell: bash
-        run: chmod +x ./gradlew
+        run: |
+          ls -la
+          ls -la ./gradlew
+          chmod 755 ./gradlew
+          ./gradlew --version
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -46,6 +50,7 @@ jobs:
           cache: gradle
 
       - name: Gradle test
+        shell: bash
         run: ./gradlew test --no-daemon
 
       - name: Derive tags
