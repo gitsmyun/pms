@@ -3,7 +3,6 @@ package com.company.pms.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -37,7 +36,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 // 기본로그인 끔
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(basic -> basic.disable())
                 .formLogin(form -> form.disable())
                 .build();
     }
