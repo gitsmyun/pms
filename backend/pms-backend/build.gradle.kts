@@ -39,7 +39,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // --- WebMVC + Swagger UI ---
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
     // --- Data ---
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -59,6 +59,8 @@ dependencies {
 
     // --- Tests (지금 단계 최소 세트) ---
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // MockMvc / test slices
+    testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.security:spring-security-test")
 
     // --- Integration Tests (Testcontainers) ---
@@ -66,6 +68,9 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
+
+    // 테스트에서 in-memory DB(H2) 사용
+    testRuntimeOnly("com.h2database:h2")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -83,8 +88,16 @@ tasks.withType<Javadoc>().configureEach {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     systemProperty("file.encoding", "UTF-8")
+
     // 환경에 따라 테스트 탐지가 흔들릴 수 있어 초기 기준선에서는 비발견 실패를 방지
     failOnNoDiscoveredTests = false
+
+    // Windows에서 Gradle이 이전 test-results 바이너리(output.bin)를 지우는 단계에서
+    // 간헐적으로 파일 잠금이 발생해 빌드가 실패하는 케이스가 있음.
+    // (특히 IDE/AV/인덱서가 build 디렉터리를 스캔할 때)
+    // → 테스트를 항상 별도 JVM으로 포크해 핸들이 빨리 반납되도록 완화.
+    forkEvery = 1
+    maxParallelForks = 1
 }
 
 // 통합 테스트 소스셋 분리

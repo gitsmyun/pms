@@ -1,0 +1,14 @@
+spring:
+  # 단위/보안 테스트에서는 외부 인프라 의존성을 제거한다.
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+
+# 테스트에서는 실제 IdP 연동 대신 JwtDecoder 스텁을 사용하므로 issuer-uri는 비워도 된다.
+

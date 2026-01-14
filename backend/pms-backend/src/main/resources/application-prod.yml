@@ -1,4 +1,12 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # prod에서는 실제 프로덕션 IdP의 issuer-uri로 설정
+          # 예: https://sso.example.com/realms/pms
+          issuer-uri: ${OIDC_ISSUER_URI}
+
   jpa:
     properties:
       hibernate:
