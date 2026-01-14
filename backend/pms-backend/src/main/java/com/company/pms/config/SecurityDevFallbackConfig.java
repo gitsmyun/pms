@@ -11,38 +11,36 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * 엔터프라이즈 권장: dev/test/prod는 OIDC(OAuth2 Resource Server) 기반 JWT 검증을 기본으로 한다.
- * OIDC_ISSUER_URI가 설정되어 있을 때만 활성화됨.
+ * Dev 환경에서 OIDC_ISSUER_URI가 설정되지 않았을 때 사용하는 fallback 보안 설정.
+ * SSO IdP 준비 전까지 임시로 사용됨.
  */
 @Configuration
 @EnableWebSecurity
-@Profile({"dev", "test", "prod"})
+@Profile({"dev"})
 @ConditionalOnProperty(
     name = "spring.security.oauth2.resourceserver.jwt.issuer-uri",
-    matchIfMissing = false
+    havingValue = "",
+    matchIfMissing = true
 )
-public class SecurityOidcConfig {
+public class SecurityDevFallbackConfig {
 
     @Bean
-    public SecurityFilterChain oidcSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain devFallbackSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                // API 서버이므로 기본은 stateless
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // SPA + bearer 기반이면 CSRF 불필요(쿠키 세션 방식으로 전환 시 재검토)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Actuator 최소 허용
+                        // Actuator 허용
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         // Preflight 허용
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 나머지 API는 인증 필요
-                        .requestMatchers("/api/**").authenticated()
-                        // 그 외(정적/기타)는 필요시 정책 조정
-                        .anyRequest().denyAll()
+                        // Dev 환경 임시: API 허용 (SSO 준비 전까지)
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().permitAll()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}))
                 .httpBasic(basic -> basic.disable())
                 .formLogin(form -> form.disable())
                 .build();
     }
 }
+
