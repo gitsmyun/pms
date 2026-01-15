@@ -1,15 +1,16 @@
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          # dev에서는 실제 사내 IdP(또는 dev용 Keycloak)의 issuer-uri로 설정
-          # 예: https://dev-sso.example.com/realms/pms
-          issuer-uri: ${OIDC_ISSUER_URI:}
+# SSO IdP 준비 전까지는 issuer-uri를 비워둠 (SecurityDevConfig가 활성화됨)
+# SSO IdP 준비 후 환경변수로 설정: OIDC_ISSUER_URI=https://dev-sso.example.com/realms/pms
+#spring:
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: ${OIDC_ISSUER_URI:}
 
-# dev 환경에서 swagger를 켜야 한다면 true로(단, 네트워크/인증 제한 권장)
+# dev 환경에서 swagger 활성화 (SSO IdP 준비 전까지 개발 편의성 제공)
 springdoc:
   api-docs:
-    enabled: ${SWAGGER_ENABLED_DEV:false}
+    enabled: true
   swagger-ui:
-    enabled: ${SWAGGER_ENABLED_DEV:false}
+    enabled: true
+    path: /swagger-ui.html
