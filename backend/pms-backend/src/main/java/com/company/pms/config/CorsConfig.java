@@ -20,25 +20,31 @@ public class CorsConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // 주의: 운영에서는 '*' 금지. 여기서는 기본값을 비워두고 env로 받는다.
-        // 콤마 구분: https://dev.pms.example.com,http://localhost:5173
         String origins = System.getenv().getOrDefault("CORS_ALLOWED_ORIGINS", "");
+        String profile = System.getenv().getOrDefault("SPRING_PROFILES_ACTIVE", "local");
+
         if (!origins.isBlank()) {
+            // 환경변수로 명시적으로 설정된 경우
             config.setAllowedOrigins(List.of(origins.split(",")));
+        } else if ("dev".equals(profile) || "test".equals(profile)) {
+            // dev/test 환경에서는 모든 Origin 허용 (SSO IdP 준비 전 임시)
+            config.setAllowedOriginPatterns(List.of("*"));
         } else {
-            // 로컬 개발 환경: 환경 변수가 없으면 localhost 허용
+            // 로컬 개발 환경: localhost만 허용
             config.setAllowedOrigins(List.of(
                     "http://localhost:5173",
                     "http://localhost:8080",
+                    "http://localhost:8181",
                     "http://127.0.0.1:5173",
-                    "http://127.0.0.1:8080"
+                    "http://127.0.0.1:8080",
+                    "http://127.0.0.1:8181"
             ));
         }
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setExposedHeaders(List.of("Location"));
-        config.setAllowCredentials(false);
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

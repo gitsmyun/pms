@@ -26,6 +26,7 @@ public class SecurityDevConfig {
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) {
         return http
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors -> {}) // CORS 활성화 (CorsConfigurationSource 사용)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Dev 환경에서는 모든 요청 허용 (SSO IdP 준비 전)
