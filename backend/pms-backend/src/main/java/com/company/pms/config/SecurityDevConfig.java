@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile({"dev", "test"})
 @ConditionalOnProperty(
     name = "spring.security.oauth2.resourceserver.jwt.issuer-uri",
-    havingValue = "false",
     matchIfMissing = true
 )
 public class SecurityDevConfig {
