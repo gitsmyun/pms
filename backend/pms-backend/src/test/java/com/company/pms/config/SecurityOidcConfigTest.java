@@ -26,8 +26,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * SecurityOidcConfig 테스트
  * - test 프로파일에서 dev/test/prod 보안 설정이 적용되는지 검증
  * - JwtDecoder 스텁을 사용하여 외부 IdP 의존성 제거
+ * - issuer-uri를 설정하여 SecurityOidcConfig 활성화 (SecurityDevConfig 비활성화)
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+        "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9999/test-realm"
+    }
+)
 @ActiveProfiles("test")
 @Import(SecurityOidcConfigTest.TestJwtDecoderConfig.class)
 class SecurityOidcConfigTest {

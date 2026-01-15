@@ -12,14 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * 엔터프라이즈 권장: dev/test/prod는 OIDC(OAuth2 Resource Server) 기반 JWT 검증을 기본으로 한다.
- * OIDC_ISSUER_URI가 설정되어 있을 때만 활성화됨.
+ * OIDC_ISSUER_URI가 실제로 설정되어 있을 때만 활성화됨.
  */
 @Configuration
-@EnableWebSecurity
 @Profile({"dev", "test", "prod"})
 @ConditionalOnProperty(
-    name = "spring.security.oauth2.resourceserver.jwt.issuer-uri",
-    matchIfMissing = false
+    name = "spring.security.oauth2.resourceserver.jwt.issuer-uri"
 )
 public class SecurityOidcConfig {
 
