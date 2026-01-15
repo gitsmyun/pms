@@ -34,20 +34,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Ensure gradlew is executable
-        shell: bash
-        run: |
-          ls -la
-          ls -la ./gradlew
-          chmod 755 ./gradlew
-          ./gradlew --version
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
           cache: gradle
+
+      - name: Make gradlew executable
+        shell: bash
+        run: chmod +x ./gradlew
 
       - name: Gradle test
         shell: bash
