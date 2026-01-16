@@ -1,5 +1,56 @@
-# SSO IdP 준비 전까지는 issuer-uri를 비워둠 (SecurityDevConfig가 활성화됨)
-# SSO IdP 준비 후 환경변수로 설정: OIDC_ISSUER_URI=https://dev-sso.example.com/realms/pms
+# ===== SSO IdP 준비 전 (현재 상태) =====
+# - SecurityDevConfig 활성화: 모든 요청 permitAll
+# - SecurityOidcConfig 비활성화: @ConditionalOnProperty 조건 불만족
+# - CORS: allowedOriginPatterns("*") 모든 Origin 허용
+
+# ===== SSO IdP 등록 후 설정 방법 =====
+#
+# 1. 이 파일 수정 (선택사항 - 환경변수만으로도 동작):
+#    아래 주석을 해제하고 환경변수로 값 주입
+#
+# spring:
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           # Keycloak 예시: https://keycloak.example.com/realms/pms-realm
+#           # Azure AD 예시: https://login.microsoftonline.com/{tenant-id}/v2.0
+#           # Okta 예시: https://{your-domain}.okta.com/oauth2/default
+#           issuer-uri: ${OIDC_ISSUER_URI}
+#
+#           # 추가 설정 (필요 시):
+#           # jwk-set-uri: ${OIDC_JWK_SET_URI}  # JWKS endpoint 직접 지정
+#           # audiences: ${OIDC_AUDIENCES}       # JWT audience 검증
+#
+# 2. docker-compose.dev.yml 환경변수 설정 (필수):
+#    ```yaml
+#    backend:
+#      environment:
+#        # OIDC 설정
+#        OIDC_ISSUER_URI: https://dev-sso.example.com/realms/pms
+#
+#        # CORS 설정 (보안 강화)
+#        CORS_ALLOWED_ORIGINS: https://dev.pms.example.com,http://dev-server-ip:8181
+#
+#        # Swagger 비활성화 (운영 유사 환경)
+#        SWAGGER_ENABLED_DEV: false
+#    ```
+#
+# 3. 자동 전환:
+#    - OIDC_ISSUER_URI 환경변수 설정 시 SecurityOidcConfig 활성화
+#    - SecurityDevConfig 자동 비활성화
+#    - Spring Boot Auto-configuration이 JwtDecoder Bean 자동 생성
+#
+# 4. 검증:
+#    - 백엔드 로그: "SecurityOidcConfig" Bean 로드 확인
+#    - API 테스트: Authorization 헤더 없이 요청 시 401 응답
+#    - Bearer 토큰: 유효한 JWT와 함께 요청 시 정상 응답
+#
+# 5. 롤백:
+#    - OIDC_ISSUER_URI 환경변수 제거 또는 빈 문자열로 설정
+#    - 컨테이너 재시작 시 다시 SecurityDevConfig 활성화
+
+# SSO IdP 준비 전까지는 issuer-uri를 주석 처리 (SecurityDevConfig가 활성화됨)
 #spring:
 #  security:
 #    oauth2:
@@ -8,9 +59,10 @@
 #          issuer-uri: ${OIDC_ISSUER_URI:}
 
 # dev 환경에서 swagger 활성화 (SSO IdP 준비 전까지 개발 편의성 제공)
+# SSO 등록 후에는 보안을 위해 비활성화 권장 (환경변수로 제어)
 springdoc:
   api-docs:
-    enabled: true
+    enabled: ${SWAGGER_ENABLED_DEV:true}
   swagger-ui:
-    enabled: true
+    enabled: ${SWAGGER_ENABLED_DEV:true}
     path: /swagger-ui.html

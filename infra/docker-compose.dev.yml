@@ -1,9 +1,14 @@
 # 작성일 2026 01 09
 # 작업자 윤성민
+# 작성일 2026 01 09
+# 작업자 윤성민
 # 설명 이 파일은 PMS2의 dev 서버 배포를 위한 Docker Compose 구성이다
 # 설명 백엔드와 프론트엔드는 GitHub Actions가 GHCR에 발행한 이미지 태그를 사용하며 동일 이미지 승격 원칙을 위해 이미지 태그를 환경 변수로 주입한다
 # 설명 현재는 dev 서버가 없으므로 로컬 또는 향후 dev 서버에서 동일 구성을 사용할 수 있도록 작성한다
 # 설명 향후 Kubernetes 전환 시에도 서비스 단위를 backend frontend db로 유지하여 매니페스트 전환이 최소 수정으로 가능하도록 한다
+
+# 프로젝트 이름 명시 (볼륨/네트워크 이름 통일)
+name: pms_dev
 
 services:
   postgres:
@@ -26,15 +31,39 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
+      - keycloak  # Keycloak이 먼저 시작되도록 의존성 추가
     ports:
       - "${BACKEND_PORT_DEV:-8080}:8080"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE_DEV:-dev}
-      # OIDC issuer (Resource Server JWT)
-      OIDC_ISSUER_URI: ${OIDC_ISSUER_URI:-}
-      # CORS (comma-separated)
+
+      # ===== SSO IdP 설정 =====
+      # SSO IdP 준비 전: 비워두거나 설정하지 않음 (SecurityDevConfig 활성화)
+      # SSO IdP 등록 후: Keycloak/Azure AD/Okta의 Issuer URI 설정 (SecurityOidcConfig 활성화)
+      #
+      # Keycloak 예시:
+      # OIDC_ISSUER_URI: https://keycloak.example.com/realms/pms-realm
+      #
+      # Azure AD 예시:
+      # OIDC_ISSUER_URI: https://login.microsoftonline.com/{tenant-id}/v2.0
+      #
+      # Okta 예시:
+      # OIDC_ISSUER_URI: https://{your-domain}.okta.com/oauth2/default
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${OIDC_ISSUER_URI:-}
+
+      # ===== CORS 설정 =====
+      # SSO IdP 준비 전: 비워두면 dev 환경에서 모든 Origin 허용 (allowedOriginPatterns: "*")
+      # SSO IdP 등록 후: 특정 Origin만 허용하여 보안 강화 권장
+      #
+      # 예시 (콤마로 구분):
+      # CORS_ALLOWED_ORIGINS: https://dev.pms.example.com,http://192.168.1.100:8181
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
 
+      # ===== Swagger 설정 =====
+      # SSO IdP 등록 후에는 보안을 위해 비활성화 권장
+      # SWAGGER_ENABLED_DEV: ${SWAGGER_ENABLED_DEV:-false}
+
+      # ===== 데이터베이스 설정 =====
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
       DB_NAME: ${DB_NAME:-pms}
@@ -49,7 +78,52 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT_DEV:-8081}:80"
+      - "${FRONTEND_PORT_DEV:-8181}:80"  # 기본값 8181
+
+  # ===== Keycloak SSO IdP =====
+  # SSO 인증 서버 (개발/테스트 환경)
+  # Production에서는 외부 Keycloak 또는 사내 SSO 사용 권장
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: pms-dev-keycloak
+    restart: unless-stopped
+    ports:
+      - "${KEYCLOAK_PORT_DEV:-8280}:8080"
+    environment:
+      # 관리자 계정 (보안: 환경변수로 제어)
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+
+      # 호스트 설정
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
+      KC_HOSTNAME_PORT: ${KEYCLOAK_PORT_DEV:-8280}
+
+      # 개발 환경 설정 (HTTP 허용, Production에서는 HTTPS 필수)
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+
+      # 모니터링
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+    command:
+      - start-dev
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 90s  # Keycloak은 시작에 1-2분 소요
+    networks:
+      - default
 
 volumes:
   postgres-dev-data:
+  keycloak-data:  # Keycloak 데이터 영속화 (Realm/Client/User)
+
+networks:
+  default:
+    name: pms_dev_default
+
