@@ -96,7 +96,13 @@ jobs:
         shell: bash
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          corepack prepare pnpm@10.27.0 --activate
+
+      - name: Verify pnpm installation
+        shell: bash
+        run: |
+          pnpm --version
+          which pnpm
 
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -112,9 +118,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Verify pnpm
-        shell: bash
-        run: pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
