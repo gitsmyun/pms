@@ -31,12 +31,14 @@ keycloak.init({
   responseMode: 'fragment', // ✅ Hash fragment 사용 (URL 히스토리에 안 남음)
 
   // ✅ checkLoginIframe 비활성화 (IP 접속 시 타임아웃 방지)
-  // 개발 환경에서 다른 PC 접속 시 iframe CORS 제한으로 타임아웃 발생
-  // Silent SSO는 토큰 갱신으로 대체
+  // 대체 방안: 토큰 자동 갱신으로 세션 유지
   checkLoginIframe: false,
 
   // 토큰 저장 방식 (기업 표준)
-  enableLogging: import.meta.env.DEV // 개발 환경에서만 로깅
+  enableLogging: import.meta.env.DEV, // 개발 환경에서만 로깅
+
+  // ✅ messageReceiveTimeout 늘려서 타임아웃 방지
+  messageReceiveTimeout: 10000 // 10초 (기본값 5초)
 }).then((authenticated) => {
   console.log(`✅ Keycloak 초기화 완료: ${authenticated ? '인증됨' : '미인증'}`)
 
@@ -47,14 +49,11 @@ keycloak.init({
     return
   }
 
-  // ✅ 최신 기업 표준: URL에서 인증 파라미터 즉시 제거
-  // Fragment는 서버로 전송되지 않지만, 사용자에게 보이므로 제거 필요
-  if (window.location.hash) {
-    const cleanUrl = window.location.origin + window.location.pathname
-    // replaceState로 히스토리에 남기지 않고 즉시 변경
-    window.history.replaceState({}, document.title, cleanUrl)
-    console.log('✅ URL 정리: 인증 파라미터 제거 (기업 표준)')
-  }
+  // ✅ 최신 기업 UX 표준: URL 파라미터 즉시 제거
+  // Keycloak이 파라미터를 이미 처리했으므로 즉시 정리
+  const cleanUrl = window.location.origin + window.location.pathname
+  window.history.replaceState({}, document.title, cleanUrl)
+  console.log('✅ URL 정리 완료: 깨끗한 URL (기업 UX 표준)')
 
   // 토큰 자동 갱신 설정
   if (authenticated) {
