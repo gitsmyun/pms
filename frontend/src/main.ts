@@ -29,9 +29,11 @@ keycloak.init({
   pkceMethod: 'S256', // PKCE 사용 (OAuth 2.1 표준)
   flow: 'standard', // Authorization Code Flow
   responseMode: 'fragment', // ✅ Hash fragment 사용 (URL 히스토리에 안 남음)
-  checkLoginIframe: true, // Silent SSO 체크 활성화
-  checkLoginIframeInterval: 5, // 5초마다 세션 체크
-  silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+
+  // ✅ checkLoginIframe 비활성화 (IP 접속 시 타임아웃 방지)
+  // 개발 환경에서 다른 PC 접속 시 iframe CORS 제한으로 타임아웃 발생
+  // Silent SSO는 토큰 갱신으로 대체
+  checkLoginIframe: false,
 
   // 토큰 저장 방식 (기업 표준)
   enableLogging: import.meta.env.DEV // 개발 환경에서만 로깅
