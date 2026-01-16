@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: ProjectsView,
-    meta: { requiresAuth: false } // 홈은 인증 불필요
+    meta: { requiresAuth: true } // 모든 페이지 인증 필요
   },
   {
     path: '/projects',
