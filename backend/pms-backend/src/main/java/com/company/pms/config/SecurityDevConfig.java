@@ -3,7 +3,7 @@ package com.company.pms.config;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -40,10 +40,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @Profile({"dev", "test"})
-@ConditionalOnProperty(
-    name = "spring.security.oauth2.resourceserver.jwt.issuer-uri",
-    havingValue = "",
-    matchIfMissing = true
+@ConditionalOnExpression(
+    "T(org.springframework.util.StringUtils).isEmpty('${spring.security.oauth2.resourceserver.jwt.issuer-uri:}')"
 )
 public class SecurityDevConfig {
 
