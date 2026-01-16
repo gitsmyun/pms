@@ -20,13 +20,15 @@ import './style.css'
  * 최신 기업 표준 설정:
  * - onLoad: 'login-required' - 미인증 시 자동 로그인 페이지로 이동
  * - flow: 'standard' - Authorization Code Flow (가장 안전)
- * - redirectUri: 명시적 설정으로 로그인 후 원래 페이지로 복귀
+ * - responseMode: 'fragment' - Hash로 받아 히스토리에 안 남음
  */
+
 keycloak.init({
   onLoad: 'login-required', // ✅ 로그인 필수 - 미인증 시 자동 리다이렉트
   redirectUri: window.location.origin + '/', // 로그인 후 홈으로 복귀
   pkceMethod: 'S256', // PKCE 사용 (OAuth 2.1 표준)
   flow: 'standard', // Authorization Code Flow
+  responseMode: 'fragment', // ✅ Hash fragment 사용 (URL 히스토리에 안 남음)
   checkLoginIframe: true, // Silent SSO 체크 활성화
   checkLoginIframeInterval: 5, // 5초마다 세션 체크
   silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
@@ -43,12 +45,13 @@ keycloak.init({
     return
   }
 
-  // URL에서 인증 코드 파라미터 제거 (보안 강화)
-  if (window.location.hash && (window.location.hash.includes('code=') || window.location.hash.includes('state='))) {
-    // Hash fragment를 제거하고 깨끗한 URL로 이동
+  // ✅ 최신 기업 표준: URL에서 인증 파라미터 즉시 제거
+  // Fragment는 서버로 전송되지 않지만, 사용자에게 보이므로 제거 필요
+  if (window.location.hash) {
     const cleanUrl = window.location.origin + window.location.pathname
+    // replaceState로 히스토리에 남기지 않고 즉시 변경
     window.history.replaceState({}, document.title, cleanUrl)
-    console.log('✅ URL 정리 완료: 인증 코드 제거됨')
+    console.log('✅ URL 정리: 인증 파라미터 제거 (기업 표준)')
   }
 
   // 토큰 자동 갱신 설정
