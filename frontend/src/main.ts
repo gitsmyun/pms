@@ -64,8 +64,9 @@ const initOptions: any = {
   flow: 'standard',
 
   // ✅ PKCE: 보안 컨텍스트에서만 활성화
-  // HTTP + IP 환경에서는 비활성화 (Web Crypto API 미지원)
-  ...(supportsPKCE ? { pkceMethod: 'S256' } : {}),
+  // HTTP + IP 환경에서는 명시적으로 비활성화 (Web Crypto API 미지원)
+  // Keycloak 26.x는 기본적으로 PKCE를 강제하므로 false로 명시 필요
+  pkceMethod: supportsPKCE ? 'S256' : false,
 
   // ✅ responseMode 명시적 설정
   // - fragment: #으로 받아 히스토리에 안 남김 (표준)
