@@ -133,18 +133,8 @@ keycloak.init(initOptions).then((authenticated) => {
     console.log('    • session_state:', hashParams.get('session_state') ? '✅ 있음' : '❌ 없음')
   }
 
-  // ✅ URL 정리
-  const cleanUrl = window.location.origin + window.location.pathname
-  if (window.location.href !== cleanUrl) {
-    console.log('')
-    console.log('🧹 [URL 정리] 파라미터 제거 중...')
-    console.log('  - 이전:', window.location.href)
-    console.log('  - 이후:', cleanUrl)
-    window.history.replaceState({}, document.title, cleanUrl)
-    console.log('  ✅ URL 정리 완료')
-  } else {
-    console.log('  ✅ URL이 이미 깨끗함 (파라미터 없음)')
-  }
+  // ✅ URL 정리는 Vue Router 초기화 후 수행
+  // (Vue Router가 초기 라우트를 설정한 이후에 정리)
 
   // 토큰 정보 로깅
   if (authenticated) {
@@ -200,6 +190,57 @@ keycloak.init(initOptions).then((authenticated) => {
   app.mount('#app')
 
   console.log('✅ [Vue] 앱 마운트 완료')
+
+  // ✅ Vue Router 초기화 완료 후 URL 정리
+  // nextTick을 사용하여 Router가 완전히 준비될 때까지 대기
+  router.isReady().then(() => {
+    console.log('')
+    console.log('🧹 [URL 정리] Vue Router 준비 완료, URL 정리 시작')
+
+    // OAuth 파라미터 확인
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasAuthParams = urlParams.has('code') ||
+                           urlParams.has('state') ||
+                           urlParams.has('session_state')
+
+    const hashParams = new URLSearchParams(window.location.hash.substring(1))
+    const hasHashAuthParams = hashParams.has('code') ||
+                               hashParams.has('state') ||
+                               hashParams.has('session_state')
+
+    // OAuth 파라미터가 있으면 정리
+    if (hasAuthParams || hasHashAuthParams) {
+      console.log('  - OAuth 파라미터 감지:', {
+        query: hasAuthParams,
+        hash: hasHashAuthParams
+      })
+
+      // Router의 현재 경로 (파라미터 제외)
+      const currentPath = router.currentRoute.value.path
+
+      console.log('  - 이전 URL:', window.location.href)
+      console.log('  - 정리 후 경로:', currentPath)
+
+      // Router의 replace를 사용하여 깔끔하게 정리
+      router.replace({
+        path: currentPath,
+        query: {},  // 모든 query 파라미터 제거
+        hash: ''    // hash 제거
+      }).then(() => {
+        console.log('  ✅ URL 정리 완료 (Router 사용)')
+        console.log('  - 최종 URL:', window.location.href)
+      }).catch((err) => {
+        console.warn('  ⚠️ URL 정리 중 오류:', err)
+        // Fallback: 직접 replaceState 사용
+        const cleanUrl = window.location.origin + currentPath
+        window.history.replaceState({}, document.title, cleanUrl)
+        console.log('  ✅ URL 정리 완료 (Fallback)')
+      })
+    } else {
+      console.log('  ✅ OAuth 파라미터 없음, URL 정리 불필요')
+    }
+  })
+
   console.log('=' .repeat(80))
 }).catch((error) => {
   console.error('=' .repeat(80))
