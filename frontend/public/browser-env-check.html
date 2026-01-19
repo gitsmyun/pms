@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMS - 브라우저 환경 진단</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .alert.warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+
+        .solution {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .solution h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .solution ul {
+            margin-left: 20px;
+            color: #333;
+        }
+
+        .solution li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔍 PMS Frontend - 브라우저 환경 진단</h1>
+            <p style="color: #666; margin-bottom: 20px;">
+                Keycloak SSO 및 Web Crypto API 지원 여부를 확인합니다.
+            </p>
+
+            <h2>📍 접속 정보</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">현재 URL</div>
+                    <div class="info-value" id="currentUrl"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Origin</div>
+                    <div class="info-value" id="origin"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Hostname</div>
+                    <div class="info-value" id="hostname"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Protocol</div>
+                    <div class="info-value" id="protocol"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Port</div>
+                    <div class="info-value" id="port"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Pathname</div>
+                    <div class="info-value" id="pathname"></div>
+                </div>
+            </div>
+
+            <h2>🔒 보안 컨텍스트</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Secure Context <span id="secureStatus"></span></div>
+                    <div class="info-value" id="secureContext"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Crypto API <span id="cryptoStatus"></span></div>
+                    <div class="info-value" id="cryptoApi"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">SubtleCrypto API <span id="subtleStatus"></span></div>
+                    <div class="info-value" id="subtleCrypto"></div>
+                </div>
+            </div>
+
+            <h2>🔐 PKCE 지원 여부</h2>
+            <div id="pkceSupport"></div>
+
+            <h2>🌐 브라우저 정보</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">User Agent</div>
+                    <div class="info-value" id="userAgent"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">언어</div>
+                    <div class="info-value" id="language"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">화면 해상도</div>
+                    <div class="info-value" id="screenSize"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Viewport</div>
+                    <div class="info-value" id="viewport"></div>
+                </div>
+            </div>
+
+            <div id="diagnosis"></div>
+        </div>
+    </div>
+
+    <script>
+        // 접속 정보
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('origin').textContent = window.location.origin;
+        document.getElementById('hostname').textContent = window.location.hostname;
+        document.getElementById('protocol').textContent = window.location.protocol;
+        document.getElementById('port').textContent = window.location.port || '(기본 포트)';
+        document.getElementById('pathname').textContent = window.location.pathname;
+
+        // 보안 컨텍스트
+        const isSecure = window.isSecureContext;
+        const hasCrypto = !!window.crypto;
+        const hasSubtle = !!(window.crypto && window.crypto.subtle);
+
+        document.getElementById('secureContext').textContent = isSecure ? '✅ 예 (보안 컨텍스트)' : '❌ 아니오 (비보안 컨텍스트)';
+        document.getElementById('secureStatus').innerHTML = isSecure
+            ? '<span class="status success">정상</span>'
+            : '<span class="status error">경고</span>';
+
+        document.getElementById('cryptoApi').textContent = hasCrypto ? '✅ 사용 가능' : '❌ 사용 불가';
+        document.getElementById('cryptoStatus').innerHTML = hasCrypto
+            ? '<span class="status success">사용 가능</span>'
+            : '<span class="status error">사용 불가</span>';
+
+        document.getElementById('subtleCrypto').textContent = hasSubtle ? '✅ 사용 가능' : '❌ 사용 불가';
+        document.getElementById('subtleStatus').innerHTML = hasSubtle
+            ? '<span class="status success">사용 가능</span>'
+            : '<span class="status error">사용 불가</span>';
+
+        // PKCE 지원 여부
+        const supportsPKCE = isSecure ||
+                           window.location.hostname === 'localhost' ||
+                           window.location.hostname === '127.0.0.1';
+
+        let pkceHtml = '';
+        if (supportsPKCE) {
+            pkceHtml = `
+                <div class="alert success">
+                    <strong>✅ PKCE (S256) 지원</strong><br>
+                    현재 환경에서 PKCE를 안전하게 사용할 수 있습니다.
+                </div>
+            `;
+        } else {
+            pkceHtml = `
+                <div class="alert error">
+                    <strong>❌ PKCE (S256) 미지원</strong><br>
+                    HTTP + IP 주소 조합에서는 Web Crypto API를 사용할 수 없어 PKCE가 작동하지 않습니다.
+                </div>
+            `;
+        }
+        document.getElementById('pkceSupport').innerHTML = pkceHtml;
+
+        // 브라우저 정보
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('language').textContent = navigator.language;
+        document.getElementById('screenSize').textContent = `${screen.width} × ${screen.height}`;
+        document.getElementById('viewport').textContent = `${window.innerWidth} × ${window.innerHeight}`;
+
+        // 진단 결과
+        let diagnosisHtml = '<h2>📋 진단 결과</h2>';
+
+        // 시나리오별 진단
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            // localhost 접속
+            if (hasSubtle) {
+                diagnosisHtml += `
+                    <div class="alert success">
+                        <strong>✅ 정상 환경</strong><br>
+                        localhost 접속으로 모든 기능을 사용할 수 있습니다.
+                    </div>
+                `;
+            } else {
+                diagnosisHtml += `
+                    <div class="alert warning">
+                        <strong>⚠️ 예상치 못한 상황</strong><br>
+                        localhost에서 Web Crypto API가 비활성화되어 있습니다. 브라우저 설정을 확인하세요.
+                    </div>
+                `;
+            }
+        } else {
+            // IP 또는 도메인 접속
+            if (protocol === 'https:') {
+                if (hasSubtle) {
+                    diagnosisHtml += `
+                        <div class="alert success">
+                            <strong>✅ 정상 환경 (HTTPS)</strong><br>
+                            HTTPS 연결로 모든 보안 기능을 사용할 수 있습니다.
+                        </div>
+                    `;
+                } else {
+                    diagnosisHtml += `
+                        <div class="alert error">
+                            <strong>❌ HTTPS이지만 Web Crypto API 미지원</strong><br>
+                            브라우저 또는 환경 설정 문제일 수 있습니다.
+                        </div>
+                    `;
+                }
+            } else {
+                // HTTP + IP
+                diagnosisHtml += `
+                    <div class="alert error">
+                        <strong>❌ Web Crypto API 오류 발생 환경</strong><br>
+                        HTTP + IP 주소 조합은 보안 컨텍스트가 아니므로 Web Crypto API를 사용할 수 없습니다.<br>
+                        <strong>Keycloak SSO PKCE 모드는 작동하지 않습니다.</strong>
+                    </div>
+
+                    <div class="solution">
+                        <h3>💡 해결 방법</h3>
+                        <ul>
+                            <li>
+                                <strong>방법 1: HTTPS 적용 (권장)</strong><br>
+                                자체 서명 인증서를 생성하여 HTTPS로 접속하세요.<br>
+                                <code>docs/ARCH/260119/001_Keycloak_URL_Debug_and_WebCrypto_Fix.md</code> 참조
+                            </li>
+                            <li>
+                                <strong>방법 2: localhost로 접속</strong><br>
+                                <code>http://localhost:8181</code>로 접속하면 정상 동작합니다.
+                            </li>
+                            <li>
+                                <strong>방법 3: PKCE 비활성화 (임시, 보안 약화)</strong><br>
+                                Keycloak 클라이언트 설정에서 PKCE를 비활성화하세요.<br>
+                                (프론트엔드는 자동으로 PKCE를 비활성화하도록 수정되었습니다)
+                            </li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        // URL 파라미터 검사
+        const hasQueryParams = window.location.search.length > 0;
+        const hasHashParams = window.location.hash.length > 0;
+
+        if (hasQueryParams || hasHashParams) {
+            diagnosisHtml += '<h2>🔍 URL 파라미터 분석</h2>';
+
+            if (hasQueryParams) {
+                const params = new URLSearchParams(window.location.search);
+                diagnosisHtml += `
+                    <div class="alert warning">
+                        <strong>⚠️ Query String 파라미터 발견</strong><br>
+                        <code>${window.location.search}</code>
+                    </div>
+                `;
+
+                const hasOAuthParams = params.has('code') || params.has('state') || params.has('session_state');
+                if (hasOAuthParams) {
+                    diagnosisHtml += `
+                        <div class="alert warning">
+                            <strong>OAuth 인증 파라미터 감지:</strong><br>
+                            ${params.has('code') ? '• code: ✅<br>' : ''}
+                            ${params.has('state') ? '• state: ✅<br>' : ''}
+                            ${params.has('session_state') ? '• session_state: ✅<br>' : ''}
+                            <br>
+                            <em>정상적인 경우 이 파라미터들은 자동으로 제거되어야 합니다.</em>
+                        </div>
+                    `;
+                }
+            }
+
+            if (hasHashParams) {
+                diagnosisHtml += `
+                    <div class="alert warning">
+                        <strong>⚠️ Hash Fragment 파라미터 발견</strong><br>
+                        <code>${window.location.hash}</code>
+                    </div>
+                `;
+            }
+        }
+
+        // Keycloak 연결 테스트
+        diagnosisHtml += '<h2>🔗 Keycloak 연결 테스트</h2>';
+        diagnosisHtml += '<div id="keycloakTest">테스트 중...</div>';
+
+        document.getElementById('diagnosis').innerHTML = diagnosisHtml;
+
+        // Keycloak 서버 테스트
+        const keycloakUrl = hostname === 'localhost' || hostname === '127.0.0.1'
+            ? 'http://localhost:8280'
+            : `http://${hostname}:8280`;
+
+        fetch(`${keycloakUrl}/realms/pms`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('keycloakTest').innerHTML = `
+                    <div class="alert success">
+                        <strong>✅ Keycloak 서버 연결 성공</strong><br>
+                        • Realm: ${data.realm}<br>
+                        • URL: <code>${keycloakUrl}</code><br>
+                        • Public Key: ${data.public_key ? '✅' : '❌'}
+                    </div>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('keycloakTest').innerHTML = `
+                    <div class="alert error">
+                        <strong>❌ Keycloak 서버 연결 실패</strong><br>
+                        URL: <code>${keycloakUrl}</code><br>
+                        오류: ${error.message}<br>
+                        <br>
+                        <em>Docker 컨테이너가 실행 중인지 확인하세요:</em><br>
+                        <code>docker compose -f infra/docker-compose.dev.yml ps</code>
+                    </div>
+                `;
+            });
+    </script>
+</body>
+</html>

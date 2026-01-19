@@ -6,7 +6,7 @@
  *
  * @author 윤성민 책임
  * @since 2026-01-05
- * @updated 2026-01-16 - Keycloak SSO 연동
+ * @updated 2026-01-19 - 상세 디버깅 및 IP 접속 지원 강화
  */
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -15,68 +15,181 @@ import keycloak from './keycloak'
 import './style.css'
 
 /**
+ * 🔍 브라우저 환경 상세 진단
+ */
+console.log('=' .repeat(80))
+console.log('🚀 [PMS Frontend] 애플리케이션 시작')
+console.log('=' .repeat(80))
+console.log('📍 [환경 정보]')
+console.log('  - URL:', window.location.href)
+console.log('  - Origin:', window.location.origin)
+console.log('  - Hostname:', window.location.hostname)
+console.log('  - Protocol:', window.location.protocol)
+console.log('  - Port:', window.location.port)
+console.log('')
+console.log('🔒 [보안 컨텍스트 확인]')
+console.log('  - Secure Context:', window.isSecureContext)
+console.log('  - Crypto API:', !!window.crypto)
+console.log('  - SubtleCrypto API:', !!(window.crypto && window.crypto.subtle))
+console.log('')
+
+// PKCE 지원 여부 판단
+const supportsPKCE = window.isSecureContext ||
+                     window.location.hostname === 'localhost' ||
+                     window.location.hostname === '127.0.0.1'
+
+console.log('🔐 [PKCE 지원 여부]')
+console.log('  - PKCE 사용 가능:', supportsPKCE)
+if (!supportsPKCE) {
+  console.warn('  ⚠️ HTTP + IP 접속: Web Crypto API 미지원')
+  console.warn('  ⚠️ PKCE 비활성화 모드로 전환')
+  console.warn('  💡 해결책: HTTPS 적용 또는 localhost 사용')
+}
+console.log('=' .repeat(80))
+console.log('')
+
+/**
  * Keycloak 초기화
  *
  * 최신 기업 표준 설정:
  * - onLoad: 'login-required' - 미인증 시 자동 로그인 페이지로 이동
  * - flow: 'standard' - Authorization Code Flow (가장 안전)
- * - responseMode: 'fragment' - Hash로 받아 히스토리에 안 남음
+ * - pkceMethod: S256 (HTTPS) 또는 비활성화 (HTTP + IP)
  */
 
-keycloak.init({
-  onLoad: 'login-required', // ✅ 로그인 필수 - 미인증 시 자동 리다이렉트
-  redirectUri: window.location.origin + '/', // 로그인 후 홈으로 복귀
-  pkceMethod: 'S256', // PKCE 사용 (OAuth 2.1 표준)
-  flow: 'standard', // Authorization Code Flow
-  responseMode: 'fragment', // ✅ Hash fragment 사용 (URL 히스토리에 안 남음)
+// 초기화 옵션 동적 설정
+const initOptions: any = {
+  onLoad: 'login-required',
+  redirectUri: window.location.origin + '/',
+  flow: 'standard',
+
+  // ✅ PKCE: 보안 컨텍스트에서만 활성화
+  // HTTP + IP 환경에서는 비활성화 (Web Crypto API 미지원)
+  ...(supportsPKCE ? { pkceMethod: 'S256' } : {}),
+
+  // ✅ responseMode 명시적 설정
+  // - fragment: #으로 받아 히스토리에 안 남김 (표준)
+  // - query: ?로 받음 (일부 환경에서 필요)
+  responseMode: 'fragment',
 
   // ✅ checkLoginIframe 비활성화 (IP 접속 시 타임아웃 방지)
-  // 대체 방안: 토큰 자동 갱신으로 세션 유지
   checkLoginIframe: false,
 
-  // 토큰 저장 방식 (기업 표준)
-  enableLogging: import.meta.env.DEV, // 개발 환경에서만 로깅
+  // 토큰 저장 방식
+  enableLogging: true, // 항상 로깅 활성화 (디버깅용)
 
   // ✅ messageReceiveTimeout 늘려서 타임아웃 방지
-  messageReceiveTimeout: 10000 // 10초 (기본값 5초)
-}).then((authenticated) => {
-  console.log(`✅ Keycloak 초기화 완료: ${authenticated ? '인증됨' : '미인증'}`)
+  messageReceiveTimeout: 10000
+}
+
+console.log('🔧 [Keycloak Init] 초기화 옵션:', initOptions)
+console.log('')
+
+keycloak.init(initOptions).then((authenticated) => {
+  console.log('=' .repeat(80))
+  console.log('✅ [Keycloak Init] 초기화 완료')
+  console.log('=' .repeat(80))
+  console.log('  - 인증 상태:', authenticated ? '✅ 인증됨' : '❌ 미인증')
 
   // 로그인 필수 모드에서는 항상 authenticated === true
   if (!authenticated) {
-    console.error('❌ 인증 실패 - 로그인 필요')
+    console.error('❌ [Keycloak Init] 인증 실패 - 로그인 필요')
     keycloak.login()
     return
   }
 
-  // ✅ 최신 기업 UX 표준: URL 파라미터 즉시 제거
-  // Keycloak이 파라미터를 이미 처리했으므로 즉시 정리
-  const cleanUrl = window.location.origin + window.location.pathname
-  window.history.replaceState({}, document.title, cleanUrl)
-  console.log('✅ URL 정리 완료: 깨끗한 URL (기업 UX 표준)')
+  // ✅ URL 파라미터 상세 분석
+  console.log('')
+  console.log('🔍 [URL 분석] 현재 URL 상태')
+  console.log('  - Full URL:', window.location.href)
+  console.log('  - Pathname:', window.location.pathname)
+  console.log('  - Search:', window.location.search || '(없음)')
+  console.log('  - Hash:', window.location.hash || '(없음)')
 
-  // 토큰 자동 갱신 설정
+  // Query String 파라미터 파싱
+  const urlParams = new URLSearchParams(window.location.search)
+  const hasAuthParams = urlParams.has('code') ||
+                         urlParams.has('state') ||
+                         urlParams.has('session_state')
+
+  console.log('  - OAuth 파라미터 존재:', hasAuthParams)
+  if (hasAuthParams) {
+    console.log('    • code:', urlParams.get('code') ? '✅ 있음' : '❌ 없음')
+    console.log('    • state:', urlParams.get('state') ? '✅ 있음' : '❌ 없음')
+    console.log('    • session_state:', urlParams.get('session_state') ? '✅ 있음' : '❌ 없음')
+  }
+
+  // Hash Fragment 파라미터 파싱
+  const hashParams = new URLSearchParams(window.location.hash.substring(1))
+  const hasHashAuthParams = hashParams.has('code') ||
+                             hashParams.has('state') ||
+                             hashParams.has('session_state')
+
+  console.log('  - Hash OAuth 파라미터 존재:', hasHashAuthParams)
+  if (hasHashAuthParams) {
+    console.log('    • code:', hashParams.get('code') ? '✅ 있음' : '❌ 없음')
+    console.log('    • state:', hashParams.get('state') ? '✅ 있음' : '❌ 없음')
+    console.log('    • session_state:', hashParams.get('session_state') ? '✅ 있음' : '❌ 없음')
+  }
+
+  // ✅ URL 정리
+  const cleanUrl = window.location.origin + window.location.pathname
+  if (window.location.href !== cleanUrl) {
+    console.log('')
+    console.log('🧹 [URL 정리] 파라미터 제거 중...')
+    console.log('  - 이전:', window.location.href)
+    console.log('  - 이후:', cleanUrl)
+    window.history.replaceState({}, document.title, cleanUrl)
+    console.log('  ✅ URL 정리 완료')
+  } else {
+    console.log('  ✅ URL이 이미 깨끗함 (파라미터 없음)')
+  }
+
+  // 토큰 정보 로깅
   if (authenticated) {
-    // 토큰 정보 로깅 (개발 환경에서만)
-    if (import.meta.env.DEV) {
-      console.log('토큰 저장 위치:', keycloak.tokenParsed ? 'Memory (SessionStorage 백업)' : 'N/A')
-      console.log('토큰 만료:', new Date((keycloak.tokenParsed?.exp || 0) * 1000).toLocaleString())
+    console.log('')
+    console.log('🎫 [Token 정보]')
+    console.log('  - Access Token:', keycloak.token ? '✅ 있음' : '❌ 없음')
+    console.log('  - Refresh Token:', keycloak.refreshToken ? '✅ 있음' : '❌ 없음')
+    console.log('  - ID Token:', keycloak.idToken ? '✅ 있음' : '❌ 없음')
+
+    if (keycloak.tokenParsed) {
+      console.log('  - 사용자:', keycloak.tokenParsed.preferred_username || keycloak.tokenParsed.sub)
+      console.log('  - 만료 시간:', new Date((keycloak.tokenParsed.exp || 0) * 1000).toLocaleString())
+      console.log('  - 발급 시간:', new Date((keycloak.tokenParsed.iat || 0) * 1000).toLocaleString())
+
+      const now = Math.floor(Date.now() / 1000)
+      const expiresIn = (keycloak.tokenParsed.exp || 0) - now
+      console.log('  - 남은 시간:', Math.floor(expiresIn / 60), '분', expiresIn % 60, '초')
     }
 
-    // 토큰 자동 갱신 (만료 70초 전)
+    // 토큰 자동 갱신 설정
+    console.log('')
+    console.log('🔄 [Token 자동 갱신] 활성화')
+    console.log('  - 갱신 간격: 60초마다 체크')
+    console.log('  - 갱신 기준: 만료 70초 전')
+
     setInterval(() => {
       keycloak.updateToken(70).then((refreshed) => {
         if (refreshed) {
-          console.log('🔄 토큰 갱신됨:', new Date().toLocaleTimeString())
+          console.log('🔄 [Token] 갱신됨:', new Date().toLocaleTimeString())
+          if (keycloak.tokenParsed) {
+            console.log('  - 새 만료 시간:', new Date((keycloak.tokenParsed.exp || 0) * 1000).toLocaleString())
+          }
         }
-      }).catch(() => {
-        console.error('❌ 토큰 갱신 실패 - 재로그인 필요')
+      }).catch((error) => {
+        console.error('❌ [Token] 갱신 실패:', error)
+        console.error('  - 재로그인 필요')
         keycloak.login()
       })
-    }, 60000) // 60초마다 체크
+    }, 60000)
   }
 
+  console.log('=' .repeat(80))
+  console.log('')
+
   // Vue 앱 생성 및 마운트
+  console.log('🎨 [Vue] 앱 생성 및 마운트 시작...')
   const app = createApp(App)
 
   // Keycloak 인스턴스를 전역으로 제공
@@ -84,8 +197,48 @@ keycloak.init({
 
   app.use(router)
   app.mount('#app')
+
+  console.log('✅ [Vue] 앱 마운트 완료')
+  console.log('=' .repeat(80))
 }).catch((error) => {
-  console.error('❌ Keycloak 초기화 실패:', error)
+  console.error('=' .repeat(80))
+  console.error('❌ [Keycloak Init] 초기화 실패')
+  console.error('=' .repeat(80))
+  console.error('  - Error:', error)
+  console.error('  - Message:', error.message)
+  console.error('  - Stack:', error.stack)
+
+  // Web Crypto API 오류 특별 처리
+  if (error.message && error.message.includes('Web Crypto API')) {
+    console.error('')
+    console.error('🔴 [진단] Web Crypto API 오류 감지')
+    console.error('=' .repeat(80))
+    console.error('📋 원인:')
+    console.error('  HTTP 환경에서 IP 주소로 접속하면 Web Crypto API를 사용할 수 없습니다.')
+    console.error('  PKCE (pkceMethod: S256)는 Web Crypto API가 필요합니다.')
+    console.error('')
+    console.error('💡 해결 방법:')
+    console.error('  1. HTTPS 적용 (권장)')
+    console.error('     - Nginx에서 자체 서명 인증서 사용')
+    console.error('     - Let\'s Encrypt 무료 인증서 사용')
+    console.error('')
+    console.error('  2. localhost로 접속')
+    console.error('     - http://localhost:8181 (현재 동작 중)')
+    console.error('')
+    console.error('  3. PKCE 비활성화 (임시 방편, 보안 약화)')
+    console.error('     - Keycloak 클라이언트 설정에서 PKCE 선택 해제')
+    console.error('')
+    console.error('🌐 현재 환경:')
+    console.error('  - URL:', window.location.href)
+    console.error('  - Protocol:', window.location.protocol)
+    console.error('  - Hostname:', window.location.hostname)
+    console.error('  - Secure Context:', window.isSecureContext)
+    console.error('  - Crypto API:', !!window.crypto)
+    console.error('  - SubtleCrypto:', !!(window.crypto && window.crypto.subtle))
+    console.error('=' .repeat(80))
+  }
+
+  console.error('=' .repeat(80))
 })
 
 
