@@ -43,18 +43,23 @@ console.log('')
 /**
  * Keycloak 초기화
  *
- * PKCE plain 방식 (모든 환경 통일):
+ * PKCE 비활성화 방식 (모든 환경 통일):
  * - onLoad: 'login-required' - 미인증 시 자동 로그인 페이지로 이동
  * - flow: 'standard' - Authorization Code Flow (안정적)
- * - pkceMethod: 'plain' - Web Crypto API 불필요 (localhost + IP 모두 동작)
+ * - pkceMethod: false - PKCE 비활성화 (Web Crypto API 불필요)
+ *
+ * 배경:
+ * - Keycloak JS는 'S256' 또는 false만 지원 (plain 미지원)
+ * - HTTP + IP 환경에서 S256은 Web Crypto API 필요 → 불가
+ * - 해결: PKCE 완전 비활성화
  *
  * 장점:
  * - localhost: 정상 동작 ✅
  * - HTTP + IP: 정상 동작 ✅ (Web Crypto API 불필요)
- * - PKCE 사용: 보안 유지 ✅
  *
  * 주의:
- * - plain은 S256보다 보안 약함 (개발 환경 OK, 프로덕션은 HTTPS + S256 권장)
+ * - PKCE 없음: 보안 수준 낮음 (개발 환경 임시)
+ * - 프로덕션: HTTPS + pkceMethod: 'S256' 필수
  */
 
 // 초기화 옵션 (모든 환경 동일)
@@ -65,8 +70,8 @@ const initOptions: any = {
   // ✅ Standard Flow (모든 환경)
   flow: 'standard',
 
-  // ✅ PKCE plain (Web Crypto API 불필요!)
-  pkceMethod: 'plain',
+  // ✅ PKCE 비활성화 (Keycloak JS는 'S256' 또는 false만 지원)
+  pkceMethod: false,
 
   // ✅ responseMode 명시적 설정
   responseMode: 'fragment',
