@@ -61,16 +61,14 @@ console.log('')
 const initOptions: any = {
   onLoad: 'login-required',
   redirectUri: window.location.origin + '/',
-  flow: 'standard',
 
-  // ✅ PKCE: 보안 컨텍스트에서만 활성화
-  // HTTP + IP 환경에서는 명시적으로 비활성화 (Web Crypto API 미지원)
-  // Keycloak 26.x는 기본적으로 PKCE를 강제하므로 false로 명시 필요
-  pkceMethod: supportsPKCE ? 'S256' : false,
+  // ✅ PKCE 미지원 환경에서는 implicit flow 사용
+  // standard flow는 PKCE를 강제하므로, HTTP+IP에서는 implicit으로 전환
+  flow: supportsPKCE ? 'standard' : 'implicit',
 
   // ✅ responseMode 명시적 설정
   // - fragment: #으로 받아 히스토리에 안 남김 (표준)
-  // - query: ?로 받음 (일부 환경에서 필요)
+  // - implicit flow는 fragment만 지원
   responseMode: 'fragment',
 
   // ✅ checkLoginIframe 비활성화 (IP 접속 시 타임아웃 방지)
@@ -81,6 +79,15 @@ const initOptions: any = {
 
   // ✅ messageReceiveTimeout 늘려서 타임아웃 방지
   messageReceiveTimeout: 10000
+}
+
+// ✅ PKCE는 standard flow에서만 설정
+if (supportsPKCE && initOptions.flow === 'standard') {
+  initOptions.pkceMethod = 'S256'
+  console.log('  ✅ PKCE S256 활성화 (standard flow)')
+} else if (!supportsPKCE) {
+  console.log('  ⚠️ Implicit Flow 사용 (PKCE 미지원 환경)')
+  console.log('  💡 보안 수준: 낮음 (개발 환경 임시)')
 }
 
 console.log('🔧 [Keycloak Init] 초기화 옵션:', initOptions)
