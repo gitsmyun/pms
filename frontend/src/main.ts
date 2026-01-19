@@ -33,44 +33,44 @@ console.log('  - Crypto API:', !!window.crypto)
 console.log('  - SubtleCrypto API:', !!(window.crypto && window.crypto.subtle))
 console.log('')
 
-console.log('🔐 [PKCE 설정]')
-console.log('  - Flow: implicit (Implicit Flow)')
-console.log('  - PKCE: 사용 안함 (Implicit Flow는 PKCE 불필요)')
-console.log('  💡 Implicit Flow: Web Crypto API 불필요 (localhost + IP 모두 동작)')
-console.log('  ⚠️ 보안: Standard Flow보다 낮음 (개발 환경 임시 사용)')
-console.log('  ✅ 프로덕션: HTTPS + Standard Flow + PKCE S256 권장')
+// 환경 감지: HTTPS 또는 localhost인 경우 PKCE 사용 가능
+const protocol = window.location.protocol
+const hostname = window.location.hostname
+const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
+const isHttps = protocol === 'https:'
+
+// Secure Context: HTTPS 또는 localhost
+const canUsePKCE = isHttps || isLocalhost
+
+console.log('🔐 [환경 감지]')
+console.log('  - Protocol:', protocol)
+console.log('  - Hostname:', hostname)
+console.log('  - Is Localhost:', isLocalhost)
+console.log('  - Is HTTPS:', isHttps)
+console.log('  - Can Use PKCE:', canUsePKCE)
 console.log('=' .repeat(80))
 console.log('')
 
 /**
  * Keycloak 초기화
  *
- * PKCE 비활성화 방식 (모든 환경 통일):
- * - onLoad: 'login-required' - 미인증 시 자동 로그인 페이지로 이동
- * - flow: 'standard' - Authorization Code Flow (안정적)
- * - pkceMethod: false - PKCE 비활성화 (Web Crypto API 불필요)
+ * HTTPS 환경 대응 (OAuth 2.1 표준 준수):
+ * - HTTPS 또는 localhost: Standard Flow + PKCE S256 (권장)
+ * - HTTP + IP: Implicit Flow (Web Crypto API 불필요)
  *
- * 배경:
- * - Keycloak JS는 'S256' 또는 false만 지원 (plain 미지원)
- * - HTTP + IP 환경에서 S256은 Web Crypto API 필요 → 불가
- * - 해결: PKCE 완전 비활성화
- *
- * 장점:
- * - localhost: 정상 동작 ✅
- * - HTTP + IP: 정상 동작 ✅ (Web Crypto API 불필요)
- *
- * 주의:
- * - PKCE 없음: 보안 수준 낮음 (개발 환경 임시)
- * - 프로덕션: HTTPS + pkceMethod: 'S256' 필수
+ * 환경별 동작:
+ * - http://localhost:8181: Standard Flow + PKCE S256 ✅
+ * - https://10.127.6.102:8444: Standard Flow + PKCE S256 ✅
+ * - http://10.127.6.102:8181: Implicit Flow (Fallback)
  */
 
-// 초기화 옵션 (모든 환경 동일)
+// 초기화 옵션 (환경별 동적 설정)
 const initOptions: any = {
   onLoad: 'login-required',
   redirectUri: window.location.origin + '/',
 
-  // ✅ Implicit Flow (PKCE 완전 우회!)
-  flow: 'implicit',
+  // PKCE 사용 가능하면 Standard Flow, 불가능하면 Implicit Flow
+  flow: canUsePKCE ? 'standard' : 'implicit',
 
   // ✅ responseMode 명시적 설정
   responseMode: 'fragment',
@@ -81,6 +81,14 @@ const initOptions: any = {
   // 디버깅 및 타임아웃 설정
   enableLogging: true,
   messageReceiveTimeout: 10000
+}
+
+// Standard Flow에서만 PKCE 설정
+if (canUsePKCE && initOptions.flow === 'standard') {
+  initOptions.pkceMethod = 'S256'
+  console.log('  ✅ Standard Flow + PKCE S256 활성화')
+} else {
+  console.log('  ⚠️ Implicit Flow 사용 (PKCE 불가 환경)')
 }
 
 

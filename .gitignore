@@ -49,6 +49,11 @@ Thumbs.db
 **/docker-compose.override.yml
 **/compose.override.yml
 
+# SSL 인증서 (개발 환경)
+**/certs/*.crt
+**/certs/*.key
+**/certs/*.pem
+
 # Local infra env (legacy explicit)
 infra/.env
 

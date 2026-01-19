@@ -78,7 +78,10 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT_DEV:-8181}:80"  # 기본값 8181
+      - "${FRONTEND_PORT_DEV:-8181}:80"      # HTTP (localhost 개발용)
+      - "${FRONTEND_HTTPS_PORT_DEV:-8444}:443"  # HTTPS (IP 접속용)
+    volumes:
+      - /opt/pms/dev/certs:/etc/nginx/certs:ro  # SSL 인증서 마운트
 
   # ===== Keycloak SSO IdP =====
   # SSO 인증 서버 (개발/테스트 환경)
