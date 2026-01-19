@@ -69,11 +69,8 @@ const initOptions: any = {
   onLoad: 'login-required',
   redirectUri: window.location.origin + '/',
 
-  // ✅ Standard Flow (모든 환경)
-  flow: 'standard',
-
-  // ✅ PKCE 비활성화 (Keycloak JS는 'S256' 또는 false만 지원)
-  pkceMethod: false,
+  // ✅ Implicit Flow (PKCE 완전 우회!)
+  flow: 'implicit',
 
   // ✅ responseMode 명시적 설정
   responseMode: 'fragment',
