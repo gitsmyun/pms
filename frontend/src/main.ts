@@ -33,62 +33,52 @@ console.log('  - Crypto API:', !!window.crypto)
 console.log('  - SubtleCrypto API:', !!(window.crypto && window.crypto.subtle))
 console.log('')
 
-// PKCE 지원 여부 판단
-const supportsPKCE = window.isSecureContext ||
-                     window.location.hostname === 'localhost' ||
-                     window.location.hostname === '127.0.0.1'
-
-console.log('🔐 [PKCE 지원 여부]')
-console.log('  - PKCE 사용 가능:', supportsPKCE)
-if (!supportsPKCE) {
-  console.warn('  ⚠️ HTTP + IP 접속: Web Crypto API 미지원')
-  console.warn('  ⚠️ PKCE 비활성화 모드로 전환')
-  console.warn('  💡 해결책: HTTPS 적용 또는 localhost 사용')
-}
+console.log('🔐 [PKCE 설정]')
+console.log('  - PKCE Method: plain')
+console.log('  - Flow: standard (Authorization Code)')
+console.log('  💡 plain 방식: Web Crypto API 불필요 (localhost + IP 모두 동작)')
 console.log('=' .repeat(80))
 console.log('')
 
 /**
  * Keycloak 초기화
  *
- * 최신 기업 표준 설정:
+ * PKCE plain 방식 (모든 환경 통일):
  * - onLoad: 'login-required' - 미인증 시 자동 로그인 페이지로 이동
- * - flow: 'standard' - Authorization Code Flow (가장 안전)
- * - pkceMethod: S256 (HTTPS) 또는 비활성화 (HTTP + IP)
+ * - flow: 'standard' - Authorization Code Flow (안정적)
+ * - pkceMethod: 'plain' - Web Crypto API 불필요 (localhost + IP 모두 동작)
+ *
+ * 장점:
+ * - localhost: 정상 동작 ✅
+ * - HTTP + IP: 정상 동작 ✅ (Web Crypto API 불필요)
+ * - PKCE 사용: 보안 유지 ✅
+ *
+ * 주의:
+ * - plain은 S256보다 보안 약함 (개발 환경 OK, 프로덕션은 HTTPS + S256 권장)
  */
 
-// 초기화 옵션 동적 설정
+// 초기화 옵션 (모든 환경 동일)
 const initOptions: any = {
   onLoad: 'login-required',
   redirectUri: window.location.origin + '/',
 
-  // ✅ PKCE 미지원 환경에서는 implicit flow 사용
-  // standard flow는 PKCE를 강제하므로, HTTP+IP에서는 implicit으로 전환
-  flow: supportsPKCE ? 'standard' : 'implicit',
+  // ✅ Standard Flow (모든 환경)
+  flow: 'standard',
+
+  // ✅ PKCE plain (Web Crypto API 불필요!)
+  pkceMethod: 'plain',
 
   // ✅ responseMode 명시적 설정
-  // - fragment: #으로 받아 히스토리에 안 남김 (표준)
-  // - implicit flow는 fragment만 지원
   responseMode: 'fragment',
 
   // ✅ checkLoginIframe 비활성화 (IP 접속 시 타임아웃 방지)
   checkLoginIframe: false,
 
-  // 토큰 저장 방식
-  enableLogging: true, // 항상 로깅 활성화 (디버깅용)
-
-  // ✅ messageReceiveTimeout 늘려서 타임아웃 방지
+  // 디버깅 및 타임아웃 설정
+  enableLogging: true,
   messageReceiveTimeout: 10000
 }
 
-// ✅ PKCE는 standard flow에서만 설정
-if (supportsPKCE && initOptions.flow === 'standard') {
-  initOptions.pkceMethod = 'S256'
-  console.log('  ✅ PKCE S256 활성화 (standard flow)')
-} else if (!supportsPKCE) {
-  console.log('  ⚠️ Implicit Flow 사용 (PKCE 미지원 환경)')
-  console.log('  💡 보안 수준: 낮음 (개발 환경 임시)')
-}
 
 console.log('🔧 [Keycloak Init] 초기화 옵션:', initOptions)
 console.log('')
