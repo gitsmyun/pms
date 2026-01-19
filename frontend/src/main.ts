@@ -34,9 +34,10 @@ console.log('  - SubtleCrypto API:', !!(window.crypto && window.crypto.subtle))
 console.log('')
 
 console.log('🔐 [PKCE 설정]')
-console.log('  - PKCE Method: plain')
+console.log('  - PKCE Method: false (비활성화)')
 console.log('  - Flow: standard (Authorization Code)')
-console.log('  💡 plain 방식: Web Crypto API 불필요 (localhost + IP 모두 동작)')
+console.log('  💡 PKCE 비활성화: Web Crypto API 불필요 (localhost + IP 모두 동작)')
+console.log('  ⚠️ 보안: 개발 환경 임시 사용, 프로덕션에서는 HTTPS + PKCE 필수')
 console.log('=' .repeat(80))
 console.log('')
 
