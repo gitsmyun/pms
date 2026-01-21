@@ -12,7 +12,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 엔터프라이즈 권장: dev/test/prod는 OIDC(OAuth2 Resource Server) 기반 JWT 검증을 기본으로 한다.
@@ -86,14 +97,57 @@ public class SecurityOidcConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:}")
     private String issuerUri;
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:http://localhost:8280/realms/pms/protocol/openid-connect/certs}")
+    private String jwkSetUri;
+
     @PostConstruct
     public void init() {
         log.info("╔═══════════════════════════════════════════════════════════════════════╗");
         log.info("║  🔐 SecurityOidcConfig ACTIVATED                                      ║");
         log.info("║  Mode: OAuth2 Resource Server (JWT Validation)                       ║");
         log.info("║  OIDC Issuer URI: {}", String.format("%-45s", issuerUri) + "║");
+        log.info("║  JWK Set URI: {}", String.format("%-49s", jwkSetUri) + "║");
+        log.info("║  Multi-Issuer Support: localhost, IP, HTTPS                          ║");
         log.info("║  All /api/** endpoints require valid JWT token                       ║");
         log.info("╚═══════════════════════════════════════════════════════════════════════╝");
+    }
+
+    /**
+     * Custom JwtDecoder - 여러 Issuer 지원
+     *
+     * 개발 환경에서는 localhost, IP, HTTPS 등 다양한 경로로 접속 가능하므로
+     * Keycloak이 동적으로 발급하는 여러 Issuer를 모두 허용합니다.
+     *
+     * 허용되는 Issuer:
+     * - http://localhost:8280/realms/pms (localhost 접속)
+     * - http://10.127.6.102:8280/realms/pms (IP HTTP 접속)
+     * - https://10.127.6.102:8543/realms/pms (IP HTTPS 접속 - 사용 안 함, 예비)
+     */
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        log.info("🔧 Configuring Custom JwtDecoder with JWK Set URI: {}", jwkSetUri);
+
+        NimbusJwtDecoder decoder = NimbusJwtDecoder
+                .withJwkSetUri(jwkSetUri)
+                .build();
+
+        // 다중 Issuer Validator 설정
+        List<String> validIssuers = Arrays.asList(
+                "http://localhost:8280/realms/pms",
+                "http://10.127.6.102:8280/realms/pms",
+                "https://10.127.6.102:8543/realms/pms"
+        );
+
+        log.info("🔒 Allowed Issuers: {}", validIssuers);
+
+        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(
+                new JwtTimestampValidator(),
+                new MultiIssuerValidator(validIssuers)
+        );
+
+        decoder.setJwtValidator(validator);
+
+        return decoder;
     }
 
     @Bean
@@ -150,4 +204,35 @@ public class SecurityOidcConfig {
     //     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
     //     return jwtAuthenticationConverter;
     // }
+
+    /**
+     * Multi-Issuer Validator
+     *
+     * 여러 Issuer를 검증하는 Custom Validator입니다.
+     * 개발 환경에서 localhost, IP 등 다양한 접속 경로를 지원합니다.
+     */
+    private static class MultiIssuerValidator implements OAuth2TokenValidator<Jwt> {
+        private final List<String> validIssuers;
+
+        public MultiIssuerValidator(List<String> validIssuers) {
+            this.validIssuers = validIssuers;
+        }
+
+        @Override
+        public OAuth2TokenValidatorResult validate(Jwt jwt) {
+            String issuer = jwt.getIssuer().toString();
+
+            if (validIssuers.contains(issuer)) {
+                return OAuth2TokenValidatorResult.success();
+            }
+
+            return OAuth2TokenValidatorResult.failure(
+                    new OAuth2Error(
+                            "invalid_token",
+                            String.format("Invalid issuer: %s. Allowed issuers: %s", issuer, validIssuers),
+                            null
+                    )
+            );
+        }
+    }
 }
