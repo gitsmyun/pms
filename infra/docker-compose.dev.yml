@@ -98,9 +98,11 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
 
-      # 호스트 설정
-      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-10.127.6.102}
-      KC_HOSTNAME_PORT: ${KEYCLOAK_HTTPS_PORT_DEV:-8543}
+      # 호스트 설정 - 동적으로 처리 (요청 헤더의 Host 사용)
+      # KC_HOSTNAME을 설정하지 않으면 Keycloak이 요청의 Host 헤더를 사용
+      # 이렇게 하면 localhost 접속 시 localhost로, IP 접속 시 IP로 리다이렉트
+      # KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-10.127.6.102}  # 주석 처리
+      # KC_HOSTNAME_PORT: ${KEYCLOAK_HTTPS_PORT_DEV:-8543}  # 주석 처리
 
       # 개발 환경 설정 (HTTP/HTTPS 모두 허용)
       KC_HTTP_ENABLED: "true"
