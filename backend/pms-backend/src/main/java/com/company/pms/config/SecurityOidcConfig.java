@@ -97,7 +97,7 @@ public class SecurityOidcConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:}")
     private String issuerUri;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:http://localhost:8280/realms/pms/protocol/openid-connect/certs}")
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:http://keycloak:8080/realms/pms/protocol/openid-connect/certs}")
     private String jwkSetUri;
 
     @PostConstruct
