@@ -12,12 +12,14 @@ import Keycloak from 'keycloak-js'
 /**
  * 환경별 Keycloak URL 결정
  * - localhost: http://localhost:8280
- * - 개발 서버 IP: http://10.127.6.102:8280
+ * - 개발 서버 IP (HTTPS): https://10.127.6.102:8543
  */
 const getKeycloakUrl = (): string => {
   const hostname = window.location.hostname
+  const protocol = window.location.protocol
 
   console.log('🔍 [Keycloak Config] 현재 호스트:', hostname)
+  console.log('🔍 [Keycloak Config] 프로토콜:', protocol)
 
   // localhost 접속
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -27,7 +29,13 @@ const getKeycloakUrl = (): string => {
 
   // IP 접속 (개발 서버)
   if (hostname === '10.127.6.102') {
-    console.log('✅ [Keycloak Config] 개발 서버 IP 모드')
+    // HTTPS로 접속했으면 Keycloak도 HTTPS
+    if (protocol === 'https:') {
+      console.log('✅ [Keycloak Config] 개발 서버 HTTPS 모드')
+      return 'https://10.127.6.102:8543'
+    }
+    // HTTP로 접속했으면 Keycloak도 HTTP
+    console.log('✅ [Keycloak Config] 개발 서버 HTTP 모드')
     return 'http://10.127.6.102:8280'
   }
 
