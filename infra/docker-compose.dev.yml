@@ -49,7 +49,7 @@ services:
       #
       # Okta 예시:
       # OIDC_ISSUER_URI: https://{your-domain}.okta.com/oauth2/default
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${OIDC_ISSUER_URI:-}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${OIDC_ISSUER_URI}
 
       # ===== CORS 설정 =====
       # SSO IdP 준비 전: 비워두면 dev 환경에서 모든 Origin 허용 (allowedOriginPatterns: "*")
