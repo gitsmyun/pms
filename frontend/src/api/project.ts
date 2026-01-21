@@ -16,7 +16,7 @@ export const projectApi = {
    * 프로젝트 목록 조회
    */
   async list(): Promise<Project[]> {
-    const response = await apiClient.get<Project[]>('/api/projects')
+    const response = await apiClient.get<Project[]>('/projects')
     return response.data
   },
 
@@ -24,7 +24,7 @@ export const projectApi = {
    * 프로젝트 생성
    */
   async create(request: CreateProjectRequest): Promise<Project> {
-    const response = await apiClient.post<Project>('/api/projects', request)
+    const response = await apiClient.post<Project>('/projects', request)
     return response.data
   },
 
@@ -32,7 +32,7 @@ export const projectApi = {
    * 프로젝트 상세 조회
    */
   async getById(id: number): Promise<Project> {
-    const response = await apiClient.get<Project>(`/api/projects/${id}`)
+    const response = await apiClient.get<Project>(`/projects/${id}`)
     return response.data
   }
 }
