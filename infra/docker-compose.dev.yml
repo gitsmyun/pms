@@ -91,18 +91,22 @@ services:
     container_name: pms-dev-keycloak
     restart: unless-stopped
     ports:
-      - "${KEYCLOAK_PORT_DEV:-8280}:8080"
+      - "${KEYCLOAK_PORT_DEV:-8280}:8080"      # HTTP (localhost 개발용)
+      - "${KEYCLOAK_HTTPS_PORT_DEV:-8543}:8443" # HTTPS (IP 접속용)
     environment:
       # 관리자 계정 (보안: 환경변수로 제어)
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
 
       # 호스트 설정
-      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
-      KC_HOSTNAME_PORT: ${KEYCLOAK_PORT_DEV:-8280}
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-10.127.6.102}
+      KC_HOSTNAME_PORT: ${KEYCLOAK_HTTPS_PORT_DEV:-8543}
 
-      # 개발 환경 설정 (HTTP 허용, Production에서는 HTTPS 필수)
+      # 개발 환경 설정 (HTTP/HTTPS 모두 허용)
       KC_HTTP_ENABLED: "true"
+      KC_HTTPS_ENABLED: "true"
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/dev-pms.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/dev-pms.key
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_HTTPS: "false"
 
@@ -113,6 +117,8 @@ services:
       - start-dev
     volumes:
       - keycloak-data:/opt/keycloak/data
+      - /opt/pms/dev/certs/dev-pms.crt:/opt/keycloak/certs/dev-pms.crt:ro
+      - /opt/pms/dev/certs/dev-pms.key:/opt/keycloak/certs/dev-pms.key:ro
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 || exit 1"]
       interval: 10s
