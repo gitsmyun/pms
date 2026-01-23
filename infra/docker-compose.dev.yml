@@ -104,12 +104,13 @@ services:
       # KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-10.127.6.102}  # 주석 처리
       # KC_HOSTNAME_PORT: ${KEYCLOAK_HTTPS_PORT_DEV:-8543}  # 주석 처리
 
-      # 개발 환경 설정 (HTTP만 사용)
-      # Frontend Nginx만 HTTPS 처리, Keycloak은 내부 통신으로 HTTP만 사용
+      # 개발 환경 설정 (HTTP + HTTPS 모두 활성화)
+      # - localhost 접속: HTTP (8280 포트)
+      # - IP 접속 (https://10.127.6.102:8444): HTTPS (8543 포트)
       KC_HTTP_ENABLED: "true"
-      KC_HTTPS_ENABLED: "false"
-      # KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/dev-pms.crt  # HTTPS 비활성화로 불필요
-      # KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/dev-pms.key  # HTTPS 비활성화로 불필요
+      KC_HTTPS_ENABLED: "true"
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/dev-pms.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/dev-pms.key
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_HTTPS: "false"
 
