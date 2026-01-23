@@ -78,8 +78,8 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT_DEV:-8181}:80"      # HTTP (localhost 개발용)
-      - "${FRONTEND_HTTPS_PORT_DEV:-8444}:443"  # HTTPS (IP 접속용)
+      - "80:80"      # HTTP (표준 포트)
+      - "443:443"    # HTTPS (표준 포트)
     volumes:
       - /opt/pms/dev/certs:/etc/nginx/certs:ro  # SSL 인증서 마운트
 
