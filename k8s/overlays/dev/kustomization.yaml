@@ -6,11 +6,3 @@ namespace: pms-dev
 resources:
 - ../../base
 
-patches:
-- patch: |-
-    - op: replace
-      path: /spec/rules/0/host
-      value: "10.127.6.102"
-  target:
-    kind: Ingress
-    name: pms-ingress
