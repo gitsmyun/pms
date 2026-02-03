@@ -13,3 +13,6 @@
 # workflow files should be LF
 .github/workflows/* text eol=lf
 
+# JSON files should be LF (Keycloak Realm, Kubernetes manifests 등)
+*.json text eol=lf
+
