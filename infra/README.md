@@ -70,11 +70,17 @@ docker compose -f docker-compose.dev.yml logs -f backend
 
 | 서비스 | URL | 비고 |
 |--------|-----|------|
-| Frontend | http://localhost:8181 | Vue 3 SPA |
+| Frontend (HTTP) | http://localhost | Vue 3 SPA (표준 포트 80) |
+| Frontend (HTTPS) | https://localhost | SSL 인증서 필요 |
 | Backend API | http://localhost:8180 | Spring Boot 4 |
 | Swagger UI | http://localhost:8180/swagger-ui.html | Dev 환경만 |
-| Keycloak | http://localhost:8280 | Dev 환경만 |
+| Keycloak (HTTP) | http://localhost:8280 | Dev 환경만, localhost용 |
+| Keycloak (HTTPS) | https://localhost:8543 | Dev 환경만, IP 접속용 |
 | PostgreSQL | localhost:5542 | DB 클라이언트 접속용 |
+
+**참고**: Frontend는 표준 포트(80/443)를 사용합니다. 
+- `http://localhost:8181` → `http://localhost` (포트 생략)
+- IP 접속 시: `https://10.127.6.102` (자체 서명 인증서)
 
 ## 📋 환경별 구성
 

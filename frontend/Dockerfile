@@ -12,6 +12,10 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# ARG로 빌드 타임 환경변수 주입
+ARG VITE_KEYCLOAK_URL
+ENV VITE_KEYCLOAK_URL=${VITE_KEYCLOAK_URL}
+
 # pnpm 활성화 (Node.js 16.13+ Corepack 포함)
 RUN corepack enable && corepack prepare pnpm@10.27.0 --activate
 
@@ -26,8 +30,11 @@ RUN pnpm run build
 
 FROM nginx:1.27-alpine
 
-# SPA 라우팅(history mode) 지원: 존재하지 않는 경로는 index.html로 fallback
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# ARG로 Nginx 설정 선택 (기본값: K8s용)
+ARG NGINX_CONF=nginx-k8s.conf
+
+# 설정 파일 복사
+COPY ${NGINX_CONF} /etc/nginx/conf.d/default.conf
 
 COPY --from=build /app/dist /usr/share/nginx/html
 

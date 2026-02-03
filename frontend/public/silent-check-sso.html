@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Silent SSO Check</title>
+</head>
+<body>
+    <script>
+        // Keycloak Silent SSO Check
+        // 이 페이지는 iframe으로 로드되어 세션 상태를 체크합니다.
+        parent.postMessage(location.href, location.origin);
+    </script>
+</body>
+</html>
+
