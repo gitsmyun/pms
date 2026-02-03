@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: pms-staging
+
+resources:
+- ../../base/backend
+- ../../base/frontend
+- ../../base/keycloak
+# PostgreSQL StatefulSet 제외 (AWS RDS 사용)
+
+configMapGenerator:
+- name: backend-config
+  behavior: replace
+  literals:
+  - DB_HOST=pms-staging-db.xxxxxxxxxxxx.ap-northeast-2.rds.amazonaws.com
+  - DB_PORT=5432
+  - DB_NAME=pms
+  - DB_USER=pms
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/rules/0/host
+      value: "pms-staging.duckdns.org"
+  target:
+    kind: Ingress
+    name: pms-ingress

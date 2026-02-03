@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  # AWS RDS 엔드포인트 (Step 8.5에서 업데이트 필요)
+  DB_HOST: "pms-staging-db.xxxxxxxxxxxx.ap-northeast-2.rds.amazonaws.com"
+  DB_PORT: "5432"
+  DB_NAME: "pms"
+  DB_USER: "pms"
