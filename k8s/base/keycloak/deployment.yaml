@@ -17,6 +17,7 @@ spec:
       containers:
       - name: keycloak
         image: quay.io/keycloak/keycloak:23.0
+        imagePullPolicy: Always  # ✅ 항상 최신 이미지 Pull
         args:
         - start-dev
         ports:
