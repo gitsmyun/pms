@@ -62,13 +62,15 @@ spec:
           httpGet:
             path: /actuator/health/liveness
             port: 8080
-          initialDelaySeconds: 90
+          initialDelaySeconds: 120  # 90 → 120초
           periodSeconds: 10
-          failureThreshold: 5
+          timeoutSeconds: 5  # 추가
+          failureThreshold: 6  # 5 → 6 (60초 더 대기)
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
             port: 8080
-          initialDelaySeconds: 60
+          initialDelaySeconds: 90  # 60 → 90초
           periodSeconds: 5
-          failureThreshold: 5
+          timeoutSeconds: 5  # 추가
+          failureThreshold: 12  # 5 → 12 (60초 더 대기)
