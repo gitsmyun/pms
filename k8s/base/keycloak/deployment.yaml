@@ -48,19 +48,27 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "500m"
+        startupProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30  # 30 * 10 = 300초 (5분) 최대 대기
         livenessProbe:
           httpGet:
             path: /health/live
             port: 8080
-          initialDelaySeconds: 240  # 180 → 240초 (4분) ✅
+          initialDelaySeconds: 0  # startupProbe 통과 후 즉시 시작
           periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 6
+          failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /health/ready
             port: 8080
-          initialDelaySeconds: 180  # 120 → 180초 (3분) ✅
+          initialDelaySeconds: 0  # startupProbe 통과 후 즉시 시작
           periodSeconds: 5
           timeoutSeconds: 5
-          failureThreshold: 12
+          failureThreshold: 3
