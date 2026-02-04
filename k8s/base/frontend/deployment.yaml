@@ -17,6 +17,7 @@ spec:
       containers:
       - name: frontend
         image: ghcr.io/gitsmyun/pms-frontend:develop-latest
+        imagePullPolicy: Always  # ✅ 항상 최신 이미지 Pull
         ports:
         - containerPort: 80
           name: http
