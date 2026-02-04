@@ -45,36 +45,38 @@ spec:
           value: "true"
         - name: KC_METRICS_ENABLED
           value: "true"
+        - name: KC_DB
+          value: "dev-mem"
         - name: JAVA_OPTS_APPEND
-          value: "-Djgroups.dns.query=keycloak"
+          value: "-Djgroups.dns.query=keycloak -Dquarkus.transaction-manager.enable-recovery=false"
         resources:
           requests:
-            memory: "1Gi"      # 512Mi → 1Gi
-            cpu: "500m"        # 250m → 500m
+            memory: "1Gi"
+            cpu: "500m"
           limits:
-            memory: "2Gi"      # 1Gi → 2Gi
-            cpu: "1000m"       # 500m → 1000m (1 core)
+            memory: "2Gi"
+            cpu: "1000m"
         startupProbe:
           httpGet:
-            path: /health/live
+            path: /
             port: 8080
-          initialDelaySeconds: 60   # 30 → 60초
+          initialDelaySeconds: 60
           periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 40      # 30 → 40 (최대 7분)
+          failureThreshold: 40
         livenessProbe:
           httpGet:
-            path: /health/live
+            path: /
             port: 8080
-          initialDelaySeconds: 0  # startupProbe 통과 후 즉시 시작
+          initialDelaySeconds: 0
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /health/ready
+            path: /
             port: 8080
-          initialDelaySeconds: 0  # startupProbe 통과 후 즉시 시작
+          initialDelaySeconds: 0
           periodSeconds: 5
           timeoutSeconds: 5
           failureThreshold: 3
