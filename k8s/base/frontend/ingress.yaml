@@ -3,8 +3,10 @@ kind: Ingress
 metadata:
   name: pms-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^/keycloak/(.*)$ /$1 break;
+      rewrite ^/keycloak$ / break;
 spec:
   ingressClassName: nginx
   rules:
