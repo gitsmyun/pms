@@ -4,6 +4,8 @@ import com.company.pms.project.service.ProjectErrorCode;
 import com.company.pms.project.service.ProjectNotFoundException;
 import com.company.pms.project.service.ProjectValidationException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -26,6 +28,8 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private final String problemBaseUrl;
 
@@ -116,6 +120,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception ex, HttpServletRequest request) {
+        // ⭐ 로깅 추가: 500 에러의 실제 원인 확인
+        log.error("Unexpected error occurred: {} - {}", ex.getClass().getName(), ex.getMessage(), ex);
+
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         pd.setType(ProblemType.UNEXPECTED.uri(problemBaseUrl));
         pd.setTitle(SysErrorCode.UNEXPECTED.title());
@@ -124,10 +131,11 @@ public class GlobalExceptionHandler {
 
         pd.setProperty("code", SysErrorCode.UNEXPECTED.code());
 
-        // local만 노출
+        // local/dev 환경에서는 상세 정보 노출
         String profile = System.getProperty("spring.profiles.active", System.getenv("SPRING_PROFILES_ACTIVE"));
-        if (profile != null && profile.contains("local")) {
+        if (profile != null && (profile.contains("local") || profile.contains("dev"))) {
             pd.setProperty("exception", ex.getClass().getName());
+            pd.setProperty("debugMessage", ex.getMessage());
         }
         return pd;
     }
