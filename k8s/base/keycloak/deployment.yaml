@@ -6,6 +6,8 @@ metadata:
     app: keycloak
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # RollingUpdate 대신 Recreate 사용
   selector:
     matchLabels:
       app: keycloak
@@ -37,10 +39,16 @@ spec:
           value: "false"
         - name: KC_HOSTNAME_STRICT_HTTPS
           value: "false"
+        - name: KC_PROXY
+          value: "edge"
+        - name: KC_HTTP_RELATIVE_PATH
+          value: "/keycloak"
         - name: KC_HEALTH_ENABLED
           value: "true"
         - name: KC_METRICS_ENABLED
           value: "true"
+        - name: JAVA_OPTS_APPEND
+          value: "-Djgroups.dns.query=keycloak"
         resources:
           requests:
             memory: "512Mi"

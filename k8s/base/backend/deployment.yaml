@@ -6,6 +6,8 @@ metadata:
     app: pms-backend
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # RollingUpdate 대신 Recreate 사용
   selector:
     matchLabels:
       app: pms-backend
