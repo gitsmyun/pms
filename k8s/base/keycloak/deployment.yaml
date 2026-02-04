@@ -49,19 +49,19 @@ spec:
           value: "-Djgroups.dns.query=keycloak"
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "250m"
+            memory: "1Gi"      # 512Mi → 1Gi
+            cpu: "500m"        # 250m → 500m
           limits:
-            memory: "1Gi"
-            cpu: "500m"
+            memory: "2Gi"      # 1Gi → 2Gi
+            cpu: "1000m"       # 500m → 1000m (1 core)
         startupProbe:
           httpGet:
             path: /health/live
             port: 8080
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60   # 30 → 60초
           periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 30  # 30 * 10 = 300초 (5분) 최대 대기
+          failureThreshold: 40      # 30 → 40 (최대 7분)
         livenessProbe:
           httpGet:
             path: /health/live
