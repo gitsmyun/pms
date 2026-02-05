@@ -45,6 +45,8 @@ spec:
           value: "true"
         - name: KC_METRICS_ENABLED
           value: "true"
+        - name: KC_HTTP_RELATIVE_PATH
+          value: "/keycloak"
         - name: KC_DB
           value: "dev-mem"
         - name: JAVA_OPTS_APPEND

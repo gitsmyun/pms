@@ -7,3 +7,7 @@ data:
   DB_PORT: "5432"
   DB_NAME: "pms"
   DB_USER: "pms"
+  # Keycloak Issuer URI (Kubernetes 내부 통신)
+  # OIDC_ISSUER_URI: "http://keycloak:8080/realms/pms"
+  # ⚠️ 주의: 현재는 SecurityDevConfig 사용 중 (모든 요청 허용)
+  # SSO 활성화 시 위 주석 해제
