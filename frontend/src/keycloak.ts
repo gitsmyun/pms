@@ -12,25 +12,34 @@ import Keycloak from 'keycloak-js'
 /**
  * Keycloak URL 결정
  *
- * ✅ 2026-02-05 변경사항:
- * - 로컬 개발 환경도 개발서버 Kubernetes Keycloak 사용
- * - Docker Compose Keycloak (8280, 8543)은 더 이상 사용하지 않음
- * - 모든 환경에서 https://10.127.6.102/keycloak 사용
+ * ✅ 2026-02-06 변경사항:
+ * - Kubernetes Ingress 경로 사용: /keycloak
+ * - 상대 경로 사용으로 localhost, IP, 도메인 모두 지원
+ * - Protocol(http/https) 자동 감지
  *
  * 접속 방법:
- * - 로컬 개발: http://localhost:5173 → https://10.127.6.102/keycloak (Kubernetes)
- * - 개발 서버: https://10.127.6.102 → https://10.127.6.102/keycloak (Kubernetes)
+ * - 로컬 개발: http://localhost:5173 → http://localhost/keycloak (Ingress proxy)
+ * - 개발 서버: https://10.127.6.102 → https://10.127.6.102/keycloak (Ingress)
  */
 const getKeycloakUrl = (): string => {
   const hostname = window.location.hostname
   const protocol = window.location.protocol
+  const port = window.location.port
 
   console.log('🔍 [Keycloak Config] 현재 호스트:', hostname)
   console.log('🔍 [Keycloak Config] 프로토콜:', protocol)
+  console.log('🔍 [Keycloak Config] 포트:', port || '(기본)')
 
-  // ✅ 모든 환경에서 개발서버 Kubernetes Keycloak 사용
-  console.log('✅ [Keycloak Config] Kubernetes Keycloak 사용 (Ingress 경로)')
-  return 'https://10.127.6.102/keycloak'
+  // ✅ 상대 경로 사용 - 브라우저가 현재 origin 기준으로 자동 해석
+  // localhost:5173 → localhost/keycloak (Vite proxy를 통해 10.127.6.102로 전달)
+  // 10.127.6.102 → 10.127.6.102/keycloak (직접 접속)
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    console.log('✅ [Keycloak Config] 로컬 개발 환경 - 개발서버 Keycloak 사용')
+    return `${protocol}//10.127.6.102/keycloak`
+  }
+
+  console.log('✅ [Keycloak Config] 개발서버 환경 - 상대 경로 사용')
+  return `${protocol}//${hostname}/keycloak`
 }
 
 const keycloakUrl = getKeycloakUrl()

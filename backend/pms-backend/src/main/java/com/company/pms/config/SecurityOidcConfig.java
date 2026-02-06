@@ -97,7 +97,7 @@ public class SecurityOidcConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:}")
     private String issuerUri;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:http://keycloak:8080/realms/pms/protocol/openid-connect/certs}")
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:http://keycloak:8080/keycloak/realms/pms/protocol/openid-connect/certs}")
     private String jwkSetUri;
 
     @PostConstruct
@@ -119,9 +119,9 @@ public class SecurityOidcConfig {
      * Keycloak이 동적으로 발급하는 여러 Issuer를 모두 허용합니다.
      *
      * 허용되는 Issuer:
-     * - http://localhost:8280/realms/pms (localhost 접속)
-     * - http://10.127.6.102:8280/realms/pms (IP HTTP 접속)
-     * - https://10.127.6.102:8543/realms/pms (IP HTTPS 접속 - 사용 안 함, 예비)
+     * - http://localhost/keycloak/realms/pms (localhost 접속 - Vite proxy)
+     * - http://10.127.6.102/keycloak/realms/pms (IP HTTP 접속)
+     * - https://10.127.6.102/keycloak/realms/pms (IP HTTPS 접속)
      */
     @Bean
     public JwtDecoder jwtDecoder() {
@@ -133,9 +133,9 @@ public class SecurityOidcConfig {
 
         // 다중 Issuer Validator 설정
         List<String> validIssuers = Arrays.asList(
-                "http://localhost:8280/realms/pms",
-                "http://10.127.6.102:8280/realms/pms",
-                "https://10.127.6.102:8543/realms/pms"
+                "http://localhost/keycloak/realms/pms",
+                "http://10.127.6.102/keycloak/realms/pms",
+                "https://10.127.6.102/keycloak/realms/pms"
         );
 
         log.info("🔒 Allowed Issuers: {}", validIssuers);
