@@ -4,6 +4,7 @@ metadata:
   name: pms-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
@@ -23,8 +24,8 @@ spec:
             name: pms-backend
             port:
               number: 8080
-      - path: /keycloak
-        pathType: Prefix
+      - path: /keycloak(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: keycloak
