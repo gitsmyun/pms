@@ -32,6 +32,14 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # ✅ Proxy 헤더 명시적 설정 (Admin Console 안정화)
+    # - Keycloak이 HTTPS Redirect URI를 정확하게 생성하도록 지원
+    # - Session 충돌 완화 및 Mixed Content 방지
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header X-Forwarded-Port 443;
+      proxy_set_header X-Forwarded-Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
 spec:
   ingressClassName: nginx
   rules:
