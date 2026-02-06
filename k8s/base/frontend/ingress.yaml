@@ -32,14 +32,13 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
   - http:
       paths:
-      - path: /keycloak(/|$)(.*)
-        pathType: ImplementationSpecific
+      - path: /keycloak
+        pathType: Prefix
         backend:
           service:
             name: keycloak
