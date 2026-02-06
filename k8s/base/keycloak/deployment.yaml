@@ -45,8 +45,6 @@ spec:
           value: "true"
         - name: KC_METRICS_ENABLED
           value: "true"
-        - name: KC_HTTP_RELATIVE_PATH
-          value: "/keycloak"
         - name: KC_DB
           value: "dev-mem"
         - name: JAVA_OPTS_APPEND
@@ -60,7 +58,7 @@ spec:
             cpu: "1000m"
         startupProbe:
           httpGet:
-            path: /keycloak/
+            path: /
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 10
@@ -68,7 +66,7 @@ spec:
           failureThreshold: 40
         livenessProbe:
           httpGet:
-            path: /keycloak/
+            path: /
             port: 8080
           initialDelaySeconds: 0
           periodSeconds: 10
@@ -76,7 +74,7 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /keycloak/
+            path: /
             port: 8080
           initialDelaySeconds: 0
           periodSeconds: 5
