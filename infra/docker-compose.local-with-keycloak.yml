@@ -1,0 +1,54 @@
+# 로컬 개발 환경용 Docker Compose (PostgreSQL + Keycloak)
+# 작성일: 2026-02-04
+# 용도: 로컬 개발 시 Backend/Frontend 연동 테스트
+
+name: pms_local
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: pms-local-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: pms
+      POSTGRES_USER: pms
+      POSTGRES_PASSWORD: pms
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    networks:
+      - pms-local
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: pms-local-keycloak
+    restart: unless-stopped
+    command:
+      - start-dev
+    ports:
+      - "8280:8080"  # HTTP 포트
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      # DB 설정 (PostgreSQL 사용)
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/pms
+      KC_DB_USERNAME: pms
+      KC_DB_PASSWORD: pms
+    depends_on:
+      - postgres
+    networks:
+      - pms-local
+
+volumes:
+  postgres-data:
+
+networks:
+  pms-local:
+    name: pms_local_network

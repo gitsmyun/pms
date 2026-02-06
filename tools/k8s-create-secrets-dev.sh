@@ -23,10 +23,10 @@ else
 fi
 echo ""
 
-echo "2️⃣ PostgreSQL Secret 생성"
+# 2. PostgreSQL Secret 생성
 echo "----------------------------------------"
 kubectl create secret generic postgres-secret \
-  --from-literal=password=pms123 \
+  --from-literal=password=test123 \
   -n $NAMESPACE \
   --dry-run=client -o yaml | kubectl apply -f -
 echo "✅ postgres-secret 생성 완료"

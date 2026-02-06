@@ -26,7 +26,7 @@ Write-Host ""
 Write-Host "2️⃣ PostgreSQL Secret 생성" -ForegroundColor Yellow
 Write-Host "----------------------------------------"
 kubectl create secret generic postgres-secret `
-  --from-literal=password=pms123 `
+  --from-literal=password=test123 `
   -n $NAMESPACE `
   --dry-run=client -o yaml | kubectl apply -f -
 Write-Host "✅ postgres-secret 생성 완료" -ForegroundColor Green
