@@ -60,7 +60,7 @@ spec:
             cpu: "1000m"
         startupProbe:
           httpGet:
-            path: /
+            path: /keycloak/
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 10
@@ -68,7 +68,7 @@ spec:
           failureThreshold: 40
         livenessProbe:
           httpGet:
-            path: /
+            path: /keycloak/
             port: 8080
           initialDelaySeconds: 0
           periodSeconds: 10
@@ -76,7 +76,7 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /
+            path: /keycloak/
             port: 8080
           initialDelaySeconds: 0
           periodSeconds: 5
