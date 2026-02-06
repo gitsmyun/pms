@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pms-admin-ingress
+  namespace: pms-dev
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # HTTP도 허용 (개발 환경)
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Port $server_port;
+      proxy_set_header X-Forwarded-Host $host;
+spec:
+  ingressClassName: nginx
+  rules:
+  # admin.pms.local 도메인 (hosts 파일 설정 필요)
+  - host: admin.pms.local
+    http:
+      paths:
+      - path: /keycloak
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
