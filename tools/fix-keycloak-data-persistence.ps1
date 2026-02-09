@@ -89,9 +89,16 @@ try {
         Write-Host "✅ Keycloak DB 생성 완료" -ForegroundColor Green
     }
 
-    # 사용자 및 권한 설정
+    # 사용자 생성
     kubectl exec -i postgres-0 -n pms-dev -- psql -U pms -d postgres -c "CREATE USER keycloak WITH ENCRYPTED PASSWORD 'keycloak123';" 2>&1 | Out-Null
+
+    # DB 소유권 및 권한 설정
+    kubectl exec -i postgres-0 -n pms-dev -- psql -U pms -d postgres -c "ALTER DATABASE keycloak OWNER TO keycloak;" 2>&1 | Out-Null
     kubectl exec -i postgres-0 -n pms-dev -- psql -U pms -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;" 2>&1 | Out-Null
+
+    # 스키마 권한 설정 (중요!)
+    kubectl exec -i postgres-0 -n pms-dev -- psql -U pms -d keycloak -c "GRANT ALL ON SCHEMA public TO keycloak;" 2>&1 | Out-Null
+    kubectl exec -i postgres-0 -n pms-dev -- psql -U pms -d keycloak -c "ALTER SCHEMA public OWNER TO keycloak;" 2>&1 | Out-Null
 
     Write-Host "✅ Keycloak 사용자 및 권한 설정 완료" -ForegroundColor Green
 
