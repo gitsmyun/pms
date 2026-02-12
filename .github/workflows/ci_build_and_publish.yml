@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 전체 히스토리 (Git push를 위해 필요)
-          token: ${{ secrets.GITHUB_TOKEN }}  # Git push 권한
+          token: ${{ secrets.PAT_TOKEN }}  # PAT으로 branch protection 우회
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -117,7 +117,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 전체 히스토리 (Git push를 위해 필요)
-          token: ${{ secrets.GITHUB_TOKEN }}  # Git push 권한
+          token: ${{ secrets.PAT_TOKEN }}  # PAT으로 branch protection 우회
 
       - name: Set up Node
         uses: actions/setup-node@v4
