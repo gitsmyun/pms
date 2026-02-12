@@ -12,4 +12,4 @@ images:
 - name: ghcr.io/gitsmyun/pms-backend
   newTag: sha-6bd31c0
 - name: ghcr.io/gitsmyun/pms-frontend
-  newTag: sha-0d4075b
+  newTag: sha-6bd31c0
