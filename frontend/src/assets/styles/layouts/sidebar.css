@@ -1,0 +1,436 @@
+/* ============================================
+   Layout: Sidebar (제미나이 스타일)
+   접기/펼치기 가능한 좌측 네비게이션
+   ============================================ */
+
+/* 전체 레이아웃 컨테이너 - Footer를 전체 하단에 배치하기 위한 구조 */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg-secondary);
+}
+
+/* 메인 영역 컨테이너 (사이드바 + 컨텐츠) */
+.app-main {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* ============================================
+   사이드바 컨테이너
+   ============================================ */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  background-color: var(--color-bg-primary);
+  border-right: 1px solid var(--color-neutral-200);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--duration-normal) ease, transform var(--duration-normal) ease;
+  z-index: var(--z-fixed);
+  overflow: hidden;
+}
+
+/* 사이드바 접힌 상태 */
+.sidebar.collapsed {
+  width: 64px;
+}
+
+/* 모바일: 사이드바 숨김 */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   사이드바 헤더 (로고 영역)
+   ============================================ */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 0px solid var(--color-neutral-200);
+  height: 64px; /* main-header와 동일하게 고정 */
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: opacity var(--duration-fast);
+}
+
+.sidebar-logo:hover {
+  opacity: 0.8;
+}
+
+.sidebar-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--color-primary-600);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.sidebar-logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity var(--duration-fast);
+}
+
+.sidebar.collapsed .sidebar-logo-text {
+  opacity: 0;
+  width: 0;
+}
+
+/* 토글 버튼 */
+.sidebar-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-600);
+  transition: all var(--duration-fast);
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  transform: rotate(180deg);
+}
+
+/* ============================================
+   네비게이션 영역
+   ============================================ */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem;
+}
+
+/* 네비게이션 섹션 */
+.nav-section {
+  margin-bottom: 1.5rem;
+}
+
+.nav-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity var(--duration-fast);
+}
+
+.sidebar.collapsed .nav-section-title {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* ============================================
+   네비게이션 아이템
+   ============================================ */
+.nav-item {
+  position: relative;
+  margin-bottom: 0.25rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 8px;
+  color: var(--color-neutral-700);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--duration-fast);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-link:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+.nav-link.active {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+  font-weight: 600;
+}
+
+/* 네비게이션 아이콘 */
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 네비게이션 텍스트 */
+.nav-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--duration-fast);
+}
+
+.sidebar.collapsed .nav-text {
+  opacity: 0;
+  width: 0;
+}
+
+/* 네비게이션 확장 화살표 */
+.nav-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform var(--duration-fast);
+}
+
+.nav-item.expanded .nav-arrow {
+  transform: rotate(90deg);
+}
+
+.sidebar.collapsed .nav-arrow {
+  opacity: 0;
+  width: 0;
+}
+
+/* ============================================
+   하위 메뉴 (서브 네비게이션)
+   ============================================ */
+.nav-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--duration-normal) ease;
+  padding-left: 2.5rem;
+}
+
+.nav-item.expanded .nav-submenu {
+  max-height: 500px; /* 충분히 큰 값 */
+}
+
+.sidebar.collapsed .nav-submenu {
+  display: none;
+}
+
+.nav-submenu .nav-link {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+/* ============================================
+   사이드바 푸터
+   ============================================ */
+.sidebar-footer {
+  border-top: 1px solid var(--color-neutral-200);
+  padding: 0.5rem; /* nav 영역과 동일 */
+  flex-shrink: 0;
+}
+
+.sidebar-footer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem; /* nav-link와 동일 */
+  border-radius: 8px;
+  color: var(--color-neutral-600);
+  font-size: 0.875rem;
+  transition: all var(--duration-fast);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+}
+
+.sidebar-footer-link:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+/* footer 내부 아이콘 스타일 (nav-icon과 동일하게) */
+.sidebar-footer .nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* footer 내부 텍스트 스타일 (nav-text와 동일하게) */
+.sidebar-footer .nav-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--duration-fast);
+}
+
+/* 접힌 상태에서 텍스트 숨김 */
+.sidebar.collapsed .sidebar-footer .nav-text {
+  opacity: 0;
+  width: 0;
+}
+
+/* 접힌 상태에서 툴팁 표시 */
+.sidebar.collapsed .sidebar-footer-link::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-neutral-900);
+  color: white;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast);
+  z-index: var(--z-tooltip);
+}
+
+.sidebar.collapsed .sidebar-footer-link:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   뱃지 (알림 숫자 등)
+   ============================================ */
+.nav-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.375rem;
+  background-color: var(--color-danger-500);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .nav-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  min-width: 8px;
+  height: 8px;
+  padding: 0;
+  font-size: 0;
+}
+
+/* ============================================
+   툴팁 (접힌 상태에서 메뉴명 표시)
+   ============================================ */
+.sidebar.collapsed .nav-link::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-neutral-900);
+  color: white;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast);
+  z-index: var(--z-tooltip);
+}
+
+.sidebar.collapsed .nav-link:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   모바일 오버레이
+   ============================================ */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-fixed) - 1);
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+/* ============================================
+   메인 컨텐츠 영역 오프셋
+   ============================================ */
+.main-content {
+  margin-left: 280px;
+  flex: 1;
+  transition: margin-left var(--duration-normal) ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Footer를 하단에 배치하기 위해 */
+}
+
+/* 페이지 컨텐츠 영역 (router-view 래퍼) */
+.page-content {
+  flex: 1; /* 남은 공간 차지 */
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 64px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+

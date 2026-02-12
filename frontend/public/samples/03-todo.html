@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMS - 개인 TODO 리스트</title>
+  <!--
+    ⚠️ Vite 개발 서버 실행 방법:
+    1. 터미널: cd frontend && pnpm dev
+    2. 브라우저: http://localhost:5173/samples/03-todo.html
+  -->
+  <script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+  <!-- 제미나이 스타일 레이아웃 -->
+  <div class="app-layout">
+    <!-- 메인 영역 (사이드바 + 컨텐츠) -->
+    <div class="app-main">
+      <!-- 좌측 사이드바 -->
+      <aside class="sidebar" id="sidebar">
+        <!-- 사이드바 헤더 -->
+        <div class="sidebar-header">
+          <div class="sidebar-logo" onclick="toggleSidebar()">
+            <div class="sidebar-logo-icon">P</div>
+            <span class="sidebar-logo-text">PMS</span>
+          </div>
+          <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 네비게이션 -->
+        <nav class="sidebar-nav">
+          <div class="nav-section">
+            <div class="nav-section-title">메인</div>
+
+            <div class="nav-item">
+              <a href="01-dashboard.html" class="nav-link" data-tooltip="대시보드">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                  </svg>
+                </span>
+                <span class="nav-text">대시보드</span>
+              </a>
+            </div>
+
+            <div class="nav-item">
+              <a href="02-statistics.html" class="nav-link" data-tooltip="프로젝트 진척">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                  </svg>
+                </span>
+                <span class="nav-text">프로젝트 진척</span>
+              </a>
+            </div>
+
+            <div class="nav-item">
+              <a href="03-todo.html" class="nav-link active" data-tooltip="TODO 리스트">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                  </svg>
+                </span>
+                <span class="nav-text">TODO 리스트</span>
+              </a>
+            </div>
+          </div>
+        </nav>
+
+        <!-- 사이드바 푸터 -->
+        <div class="sidebar-footer">
+          <a href="#" class="sidebar-footer-link" data-tooltip="설정">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            <span class="nav-text">설정</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- 메인 컨텐츠 -->
+      <main class="main-content">
+        <!-- 헤더 -->
+        <header class="main-header">
+          <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+
+          <div class="header-icon-btn">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+            </svg>
+            <span class="header-icon-badge">3</span>
+          </div>
+
+          <div class="user-menu" onclick="toggleUserMenu()">
+            <div class="user-menu-trigger">
+              <div class="user-avatar" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="user-info">
+                <div class="user-name">윤성민</div>
+                <div class="user-role">관리자</div>
+              </div>
+              <span class="user-menu-arrow">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </span>
+            </div>
+
+            <div class="user-dropdown">
+              <div class="user-dropdown-header">
+                <div class="user-dropdown-name">윤성민</div>
+                <div class="user-dropdown-email">admin@pms.com</div>
+              </div>
+              <div class="user-dropdown-menu">
+                <a class="user-dropdown-item">
+                  <span class="user-dropdown-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                  </span>
+                  <span>프로필</span>
+                </a>
+                <a class="user-dropdown-item">
+                  <span class="user-dropdown-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                    </svg>
+                  </span>
+                  <span>설정</span>
+                </a>
+                <div class="user-dropdown-divider"></div>
+                <a class="user-dropdown-item danger">
+                  <span class="user-dropdown-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                    </svg>
+                  </span>
+                  <span>로그아웃</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- 페이지 컨텐츠 -->
+        <div class="page-content">
+          <!-- 페이지 헤더 -->
+          <div class="page-header">
+          <!-- 페이지 헤더 -->
+          <div class="page-header">
+            <div class="page-title-wrapper">
+              <h1 class="text-h2">금일 TODO 리스트</h1>
+              <button class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                </svg>
+                새 TODO 추가
+              </button>
+            </div>
+            <p class="page-description">드래그하여 승인자에게 카드를 이동하세요</p>
+          </div>
+
+          <!-- 알림 카드 -->
+          <div class="alert-card alert-card-info mb-6">
+            <span class="alert-card-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            <div class="alert-card-content">
+              <div class="alert-card-title">드래그 앤 드롭 사용법</div>
+              <div class="alert-card-message">
+                카드를 클릭한 채로 "승인 대기" 영역으로 드래그하면 승인 요청이 전송됩니다.
+              </div>
+            </div>
+          </div>
+
+          <!-- 칸반 보드 (드래그 앤 드롭) -->
+          <div class="kanban-board">
+            <!-- 작업 중 컬럼 -->
+            <div class="kanban-column kanban-column-progress">
+              <div class="kanban-column-header">
+                <h3 class="kanban-column-title">작업 중</h3>
+                <span class="kanban-column-badge">5</span>
+              </div>
+              <div class="drop-zone" id="inProgress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <!-- TODO 카드 1 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task1">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">고객 포털 UI 디자인 수정</div>
+                    <span class="priority-high">높음</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    메인 페이지 레이아웃을 최신 디자인 가이드에 맞춰 수정하고, 반응형 대응 추가
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>오늘 17:00</span>
+                    </div>
+                    <span class="badge badge-primary badge-sm">디자인</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 2 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task2">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">API 문서 작성</div>
+                    <span class="priority-medium">보통</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    사용자 인증 API의 Swagger 문서를 작성하고 예제 코드 추가
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>오늘 18:00</span>
+                    </div>
+                    <span class="badge badge-success badge-sm">개발</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 3 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task3">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">데이터베이스 최적화</div>
+                    <span class="priority-low">낮음</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    느린 쿼리 분석 및 인덱스 추가로 성능 개선
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>내일 14:00</span>
+                    </div>
+                    <span class="badge badge-warning badge-sm">인프라</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 4 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task4">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">사용자 피드백 분석</div>
+                    <span class="priority-medium">보통</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    최근 1주일간 접수된 사용자 피드백 30건 분석 및 개선사항 도출
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>오늘 16:00</span>
+                    </div>
+                    <span class="badge badge-info badge-sm">기획</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 5 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task5">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">코드 리뷰</div>
+                    <span class="priority-high">높음</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    신규 기능 개발 완료 코드에 대한 동료 리뷰 진행
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>오늘 15:00</span>
+                    </div>
+                    <span class="badge badge-success badge-sm">개발</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 승인 대기 컬럼 -->
+            <div class="kanban-column kanban-column-review">
+              <div class="kanban-column-header">
+                <h3 class="kanban-column-title">승인 대기</h3>
+                <span class="kanban-column-badge">2</span>
+              </div>
+              <div class="drop-zone drop-zone-active" id="pending" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <!-- TODO 카드 6 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task6">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">프로젝트 제안서 작성</div>
+                    <span class="priority-high">높음</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    신규 고객사 프로젝트 제안서 작성 및 견적서 첨부
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>30분 전</span>
+                    </div>
+                    <span class="badge badge-primary badge-sm">기획</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 7 -->
+                <div class="draggable-card" draggable="true" ondragstart="drag(event)" id="task7">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">월간 보고서 작성</div>
+                    <span class="priority-medium">보통</span>
+                  </div>
+                  <div class="draggable-card-body">
+                    1월 프로젝트 진행 현황 및 성과 보고서 작성
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>1시간 전</span>
+                    </div>
+                    <span class="badge badge-warning badge-sm">보고</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 승인 완료 컬럼 -->
+            <div class="kanban-column kanban-column-done">
+              <div class="kanban-column-header">
+                <h3 class="kanban-column-title">승인 완료</h3>
+                <span class="kanban-column-badge">3</span>
+              </div>
+              <div class="drop-zone" id="approved" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <!-- TODO 카드 8 -->
+                <div class="draggable-card" style="opacity: 0.7;">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">팀 회의록 작성</div>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#10b981">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="draggable-card-body">
+                    주간 팀 회의록 작성 및 액션 아이템 정리
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <span class="text-success">✓ 승인됨</span>
+                    </div>
+                    <span class="badge badge-gray badge-sm">회의</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 9 -->
+                <div class="draggable-card" style="opacity: 0.7;">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">버그 수정</div>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#10b981">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="draggable-card-body">
+                    로그인 페이지 IE 호환성 이슈 해결
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <span class="text-success">✓ 승인됨</span>
+                    </div>
+                    <span class="badge badge-gray badge-sm">개발</span>
+                  </div>
+                </div>
+
+                <!-- TODO 카드 10 -->
+                <div class="draggable-card" style="opacity: 0.7;">
+                  <div class="draggable-card-header">
+                    <div class="draggable-card-title">테스트 케이스 작성</div>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#10b981">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="draggable-card-body">
+                    사용자 인증 기능에 대한 단위 테스트 작성
+                  </div>
+                  <div class="draggable-card-footer">
+                    <div class="draggable-card-meta">
+                      <span class="text-success">✓ 승인됨</span>
+                    </div>
+                    <span class="badge badge-gray badge-sm">QA</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 통계 섹션 -->
+          <div class="section mt-8">
+            <div class="section-header">
+              <h2 class="section-title">오늘의 통계</h2>
+            </div>
+
+            <div class="grid grid-cols-4 md:grid-cols-2 gap-4">
+              <div class="card card-primary">
+                <div class="card-body">
+                  <div class="text-body-sm text-muted mb-2">전체 작업</div>
+                  <div class="text-h2 text-primary mb-1">10</div>
+                  <div class="text-body-xs text-muted">개</div>
+                </div>
+              </div>
+
+              <div class="card card-warning">
+                <div class="card-body">
+                  <div class="text-body-sm text-muted mb-2">작업 중</div>
+                  <div class="text-h2 text-warning mb-1">5</div>
+                  <div class="text-body-xs text-muted">개</div>
+                </div>
+              </div>
+
+              <div class="card card-info">
+                <div class="card-body">
+                  <div class="text-body-sm text-muted mb-2">승인 대기</div>
+                  <div class="text-h2 text-info mb-1">2</div>
+                  <div class="text-body-xs text-muted">개</div>
+                </div>
+              </div>
+
+              <div class="card card-success">
+                <div class="card-body">
+                  <div class="text-body-sm text-muted mb-2">승인 완료</div>
+                  <div class="text-h2 text-success mb-1">3</div>
+                  <div class="text-body-xs text-muted">개</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- page-content 종료 -->
+
+      <!-- 푸터 (main-content 내부 하단) -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <div class="footer-bottom footer-compact">
+            <div class="footer-copyright">
+              © 2026 PMS. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+    </div><!-- app-main 종료 -->
+  </div><!-- app-layout 종료 -->
+
+  <!-- JavaScript -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('collapsed');
+    }
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    function toggleUserMenu() {
+      const userMenu = document.querySelector('.user-menu');
+      userMenu.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(event) {
+      const userMenu = document.querySelector('.user-menu');
+      if (userMenu && !userMenu.contains(event.target)) {
+        userMenu.classList.remove('open');
+      }
+    });
+
+    // 드래그 앤 드롭 기능
+    function allowDrop(ev) {
+      ev.preventDefault();
+      ev.currentTarget.classList.add('drop-zone-active');
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+      ev.target.classList.add('dragging');
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      ev.currentTarget.classList.remove('drop-zone-active');
+
+      const data = ev.dataTransfer.getData("text");
+      const draggedElement = document.getElementById(data);
+
+      if (draggedElement) {
+        draggedElement.classList.remove('dragging');
+
+        // 승인 완료로 드롭된 경우 스타일 변경
+        if (ev.currentTarget.id === 'approved') {
+          draggedElement.style.opacity = '0.7';
+          const header = draggedElement.querySelector('.draggable-card-header');
+          const priority = header.querySelector('span:last-child');
+          if (priority) {
+            priority.outerHTML = `
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="#10b981">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            `;
+          }
+          const footer = draggedElement.querySelector('.draggable-card-footer .draggable-card-meta');
+          if (footer) {
+            footer.innerHTML = '<span class="text-success">✓ 승인됨</span>';
+          }
+        } else {
+          draggedElement.style.opacity = '1';
+        }
+
+        ev.currentTarget.appendChild(draggedElement);
+
+        // 카운트 업데이트
+        updateCounts();
+      }
+    }
+
+    // 드롭존에서 나갈 때 스타일 제거
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+      zone.addEventListener('dragleave', function(e) {
+        if (e.target === this) {
+          this.classList.remove('drop-zone-active');
+        }
+      });
+    });
+
+    // 각 컬럼의 카드 수 업데이트
+    function updateCounts() {
+      document.querySelectorAll('.kanban-column').forEach(column => {
+        const count = column.querySelectorAll('.draggable-card').length;
+        const badge = column.querySelector('.kanban-column-badge');
+        if (badge) {
+          badge.textContent = count;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+

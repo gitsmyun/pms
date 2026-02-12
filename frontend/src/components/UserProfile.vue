@@ -1,82 +1,83 @@
 <template>
-  <!-- 세련된 사용자 프로필 드롭다운 -->
-  <div class="relative" v-if="isAuthenticated">
-    <!-- 프로필 버튼 -->
-    <button
-      @click="toggleDropdown"
-      class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
-    >
-      <!-- 사용자 아바타 -->
-      <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-white/30">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+  <!-- 사용자 메뉴 (제미나이 스타일) -->
+  <div class="user-menu" v-if="isAuthenticated" :class="{ 'open': isDropdownOpen }">
+    <!-- 사용자 메뉴 트리거 -->
+    <div class="user-menu-trigger" @click="toggleDropdown">
+      <div class="user-avatar" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
         </svg>
       </div>
-
-      <!-- 사용자 이름 -->
-      <span class="text-sm">{{ username }}</span>
-
-      <!-- 드롭다운 아이콘 -->
-      <svg
-        class="w-4 h-4 transition-transform duration-200"
-        :class="{ 'rotate-180': isDropdownOpen }"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
-    </button>
+      <div class="user-info">
+        <div class="user-name">{{ username }}</div>
+        <div class="user-role">{{ role }}</div>
+      </div>
+      <span class="user-menu-arrow">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </span>
+    </div>
 
     <!-- 드롭다운 메뉴 -->
-    <Transition
-      enter-active-class="transition ease-out duration-200"
-      enter-from-class="opacity-0 scale-95"
-      enter-to-class="opacity-100 scale-100"
-      leave-active-class="transition ease-in duration-150"
-      leave-from-class="opacity-100 scale-100"
-      leave-to-class="opacity-0 scale-95"
-    >
-      <div
-        v-if="isDropdownOpen"
-        class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
-      >
-        <!-- 사용자 정보 -->
-        <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-          <p class="text-sm font-semibold text-gray-900">{{ fullName }}</p>
-          <p class="text-xs text-gray-600 mt-1">{{ email }}</p>
-        </div>
-
-        <!-- 메뉴 아이템 -->
-        <div class="py-2">
-          <button
-            @click="logout"
-            class="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 transition-colors duration-150 flex items-center gap-2"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            로그아웃
-          </button>
-        </div>
+    <div class="user-dropdown">
+      <div class="user-dropdown-header">
+        <div class="user-dropdown-name">{{ fullName }}</div>
+        <div class="user-dropdown-email">{{ email }}</div>
       </div>
-    </Transition>
+      <div class="user-dropdown-menu">
+        <a class="user-dropdown-item" @click="goToProfile">
+          <span class="user-dropdown-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+          </span>
+          <span>프로필</span>
+        </a>
+        <a class="user-dropdown-item" @click="goToSettings">
+          <span class="user-dropdown-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+            </svg>
+          </span>
+          <span>설정</span>
+        </a>
+        <div class="user-dropdown-divider"></div>
+        <a class="user-dropdown-item danger" @click="logout">
+          <span class="user-dropdown-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+            </svg>
+          </span>
+          <span>로그아웃</span>
+        </a>
+      </div>
+    </div>
   </div>
 
   <!-- 로그인 버튼 (미인증 시) -->
   <button
     v-else
     @click="login"
-    class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
+    class="btn btn-primary"
   >
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/>
     </svg>
     로그인
   </button>
 </template>
 
 <script setup lang="ts">
+/**
+ * 사용자 프로필 컴포넌트
+ *
+ * 제미나이 스타일 사용자 메뉴 (공통 CSS 활용)
+ *
+ * @author 윤성민 책임
+ * @since 2026-01-05
+ * @updated 2026-02-11 - 제미나이 스타일 user-menu 적용
+ */
 import { ref, computed, inject, onMounted, onUnmounted } from 'vue'
 import type Keycloak from 'keycloak-js'
 
@@ -94,7 +95,14 @@ const fullName = computed(() => {
   if (token?.name) return token.name
   return `${token?.given_name || ''} ${token?.family_name || ''}`.trim() || username.value
 })
-const email = computed(() => keycloak?.tokenParsed?.email || '')
+const email = computed(() => keycloak?.tokenParsed?.email || 'user@example.com')
+const role = computed(() => {
+  // Keycloak 역할 가져오기 (realm_access.roles 또는 resource_access)
+  const realmRoles = keycloak?.tokenParsed?.realm_access?.roles || []
+  if (realmRoles.includes('admin')) return '관리자'
+  if (realmRoles.includes('manager')) return '매니저'
+  return '사용자'
+})
 
 // 메서드
 const login = () => {
@@ -102,6 +110,7 @@ const login = () => {
 }
 
 const logout = () => {
+  isDropdownOpen.value = false
   keycloak?.logout()
 }
 
@@ -109,10 +118,22 @@ const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
 
+const goToProfile = () => {
+  isDropdownOpen.value = false
+  // TODO: 프로필 페이지로 이동
+  console.log('프로필 페이지로 이동')
+}
+
+const goToSettings = () => {
+  isDropdownOpen.value = false
+  // TODO: 설정 페이지로 이동
+  console.log('설정 페이지로 이동')
+}
+
 // 외부 클릭 시 드롭다운 닫기
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
-  if (!target.closest('.relative')) {
+  if (!target.closest('.user-menu')) {
     isDropdownOpen.value = false
   }
 }

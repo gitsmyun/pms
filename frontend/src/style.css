@@ -1,2 +1,4 @@
-@import "tailwindcss";
+/* PMS 공통 CSS 시스템 임포트 */
+@import "./assets/styles/index.css";
+
 

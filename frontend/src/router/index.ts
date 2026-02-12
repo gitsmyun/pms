@@ -24,6 +24,34 @@ const routes: RouteRecordRaw[] = [
     name: 'projects',
     component: ProjectsView,
     meta: { requiresAuth: true } // 프로젝트는 인증 필요
+  },
+  // ✅ 샘플 Vue 컴포넌트 라우트
+  {
+    path: '/samples/dashboard',
+    name: 'sample-dashboard',
+    component: () => import('@/views/samples/DashboardSample.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'PMS 대시보드'
+    }
+  },
+  {
+    path: '/samples/statistics',
+    name: 'sample-statistics',
+    component: () => import('@/views/samples/StatisticsSample.vue'),
+    meta: {
+      requiresAuth: true,
+      title: '프로젝트 진척 통계'
+    }
+  },
+  {
+    path: '/samples/todo',
+    name: 'sample-todo',
+    component: () => import('@/views/samples/TodoSample.vue'),
+    meta: {
+      requiresAuth: true,
+      title: '금일 TODO 승인 관리'
+    }
   }
 ]
 
@@ -36,6 +64,7 @@ const router = createRouter({
 // onLoad: 'login-required'가 이미 로그인을 강제하므로
 // 이 가드는 추가 보안 레이어로만 작동
 router.beforeEach((to, _from, next) => {
+
   // Keycloak 초기화가 완료될 때까지 대기
   if (!keycloak.authenticated && !keycloak.didInitialize) {
     console.warn('⏳ Keycloak 초기화 대기 중...')
@@ -60,4 +89,3 @@ router.beforeEach((to, _from, next) => {
 })
 
 export default router
-

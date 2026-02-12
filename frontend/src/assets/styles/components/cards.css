@@ -1,0 +1,747 @@
+/* ============================================
+   Components: Cards
+   다양한 스타일의 카드 컴포넌트
+   ============================================ */
+
+/* 기본 카드 */
+.card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--duration-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* 카드 헤더 */
+.card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-neutral-200);
+  background-color: var(--color-bg-secondary);
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.25rem;
+}
+
+.card-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+}
+
+/* 카드 본문 */
+.card-body {
+  padding: 1.5rem;
+}
+
+/* 카드 푸터 */
+.card-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-neutral-200);
+  background-color: var(--color-bg-secondary);
+}
+
+/* ============================================
+   색상 테마 카드 (왼쪽 보더 강조)
+   ============================================ */
+.card-primary {
+  border-left: 4px solid var(--color-primary-600);
+}
+
+.card-success {
+  border-left: 4px solid var(--color-success-600);
+}
+
+.card-danger {
+  border-left: 4px solid var(--color-danger-600);
+}
+
+.card-warning {
+  border-left: 4px solid var(--color-warning-600);
+}
+
+.card-info {
+  border-left: 4px solid var(--color-info-600);
+}
+
+.card-purple {
+  border-left: 4px solid #8b5cf6;
+}
+
+.card-pink {
+  border-left: 4px solid #ec4899;
+}
+
+.card-gray {
+  border-left: 4px solid var(--color-secondary-600);
+}
+
+/* ============================================
+   배경 색상 카드 (전체 배경)
+   ============================================ */
+.card-bg-primary {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-200);
+}
+
+.card-bg-success {
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-200);
+}
+
+.card-bg-danger {
+  background-color: var(--color-danger-50);
+  border-color: var(--color-danger-200);
+}
+
+.card-bg-warning {
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-200);
+}
+
+.card-bg-info {
+  background-color: var(--color-info-50);
+  border-color: var(--color-info-200);
+}
+
+/* ============================================
+   그래디언트 카드
+   ============================================ */
+.card-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+  color: white;
+  border: none;
+}
+
+.card-gradient-primary .card-title,
+.card-gradient-primary .card-subtitle {
+  color: white;
+}
+
+.card-gradient-success {
+  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-700) 100%);
+  color: white;
+  border: none;
+}
+
+.card-gradient-success .card-title,
+.card-gradient-success .card-subtitle {
+  color: white;
+}
+
+.card-gradient-warm {
+  background: linear-gradient(135deg, var(--color-warning-500) 0%, var(--color-danger-500) 100%);
+  color: white;
+  border: none;
+}
+
+.card-gradient-cool {
+  background: linear-gradient(135deg, var(--color-info-500) 0%, var(--color-primary-600) 100%);
+  color: white;
+  border: none;
+}
+
+/* ============================================
+   통계 카드 (Stat Card)
+   ============================================ */
+.stat-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all var(--duration-fast);
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.stat-card-title {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  font-weight: 500;
+}
+
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+}
+
+.stat-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+}
+
+.stat-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.stat-card-trend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+}
+
+.stat-card-trend.up {
+  color: var(--color-success-600);
+}
+
+.stat-card-trend.down {
+  color: var(--color-danger-600);
+}
+
+.stat-card-period {
+  color: var(--color-neutral-500);
+}
+
+/* 통계 카드 색상 변형 */
+.stat-card-primary .stat-card-icon {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+}
+
+.stat-card-success .stat-card-icon {
+  background-color: var(--color-success-100);
+  color: var(--color-success-600);
+}
+
+.stat-card-danger .stat-card-icon {
+  background-color: var(--color-danger-100);
+  color: var(--color-danger-600);
+}
+
+.stat-card-warning .stat-card-icon {
+  background-color: var(--color-warning-100);
+  color: var(--color-warning-600);
+}
+
+.stat-card-info .stat-card-icon {
+  background-color: var(--color-info-100);
+  color: var(--color-info-600);
+}
+
+/* ============================================
+   이미지 카드
+   ============================================ */
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: var(--color-neutral-100);
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-normal);
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  color: white;
+}
+
+/* ============================================
+   클릭 가능한 카드
+   ============================================ */
+.card-clickable {
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.card-clickable:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--color-primary-300);
+}
+
+.card-clickable:active {
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   컴팩트 카드
+   ============================================ */
+.card-compact .card-header {
+  padding: 1rem 1.25rem;
+}
+
+.card-compact .card-body {
+  padding: 1.25rem;
+}
+
+.card-compact .card-footer {
+  padding: 0.75rem 1.25rem;
+}
+
+/* ============================================
+   플랫 카드 (그림자 없음)
+   ============================================ */
+.card-flat {
+  box-shadow: none;
+}
+
+.card-flat:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   보더리스 카드
+   ============================================ */
+.card-borderless {
+  border: none;
+  background-color: transparent;
+}
+
+/* ============================================
+   목록 카드
+   ============================================ */
+.card-list {
+  padding: 0;
+}
+
+.card-list-item {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-neutral-200);
+  transition: background-color var(--duration-fast);
+  cursor: pointer;
+}
+
+.card-list-item:last-child {
+  border-bottom: none;
+}
+
+.card-list-item:hover {
+  background-color: var(--color-neutral-50);
+}
+
+.card-list-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.card-list-item-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.card-list-item-meta {
+  font-size: 0.75rem;
+  color: var(--color-neutral-500);
+}
+
+.card-list-item-body {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  line-height: 1.5;
+}
+
+/* ============================================
+   프로필 카드
+   ============================================ */
+.profile-card {
+  text-align: center;
+}
+
+.profile-card-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  overflow: hidden;
+  border: 4px solid var(--color-neutral-200);
+}
+
+.profile-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-card-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.25rem;
+}
+
+.profile-card-role {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  margin-bottom: 1rem;
+}
+
+.profile-card-stats {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.profile-card-stat {
+  text-align: center;
+}
+
+.profile-card-stat-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.25rem;
+}
+
+.profile-card-stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================
+   알림/경고 카드
+   ============================================ */
+.alert-card {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.alert-card-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.alert-card-content {
+  flex: 1;
+}
+
+.alert-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.alert-card-message {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* 알림 카드 색상 */
+.alert-card-info {
+  background-color: var(--color-info-50);
+  border: 1px solid var(--color-info-200);
+  color: var(--color-info-800);
+}
+
+.alert-card-success {
+  background-color: var(--color-success-50);
+  border: 1px solid var(--color-success-200);
+  color: var(--color-success-800);
+}
+
+.alert-card-warning {
+  background-color: var(--color-warning-50);
+  border: 1px solid var(--color-warning-200);
+  color: var(--color-warning-800);
+}
+
+.alert-card-danger {
+  background-color: var(--color-danger-50);
+  border: 1px solid var(--color-danger-200);
+  color: var(--color-danger-800);
+}
+
+/* ============================================
+   대시보드 특화 카드 스타일
+   ============================================ */
+
+/* 메트릭 카드 - 그림자와 호버 효과가 강화된 현대적 스타일 */
+.metric-card {
+  background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-neutral-50) 100%);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid var(--color-neutral-300); /* 기본 보더 */
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* 메트릭 카드 색상 변형 - 왼쪽 보더 강조 */
+.metric-card-primary {
+  border-left-color: var(--color-primary-600);
+}
+
+.metric-card-primary .metric-card-icon {
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+}
+
+.metric-card-success {
+  border-left-color: var(--color-success-600);
+}
+
+.metric-card-success .metric-card-icon {
+  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-600) 100%);
+}
+
+.metric-card-warning {
+  border-left-color: var(--color-warning-600);
+}
+
+.metric-card-warning .metric-card-icon {
+  background: linear-gradient(135deg, var(--color-warning-500) 0%, var(--color-warning-600) 100%);
+}
+
+.metric-card-danger {
+  border-left-color: var(--color-danger-600);
+}
+
+.metric-card-danger .metric-card-icon {
+  background: linear-gradient(135deg, var(--color-danger-500) 0%, var(--color-danger-600) 100%);
+}
+
+.metric-card-info {
+  border-left-color: var(--color-info-600);
+}
+
+.metric-card-info .metric-card-icon {
+  background: linear-gradient(135deg, var(--color-info-500) 0%, var(--color-info-600) 100%);
+}
+
+.metric-card-purple {
+  border-left-color: #8b5cf6;
+}
+
+.metric-card-purple .metric-card-icon {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* 호버 시 왼쪽 보더 강조 효과 */
+.metric-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: inherit;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.metric-card:hover::before {
+  opacity: 0.4;
+  width: 8px;
+}
+
+/* 각 색상별 ::before 그래디언트 */
+.metric-card-primary::before {
+  background: linear-gradient(180deg, var(--color-primary-400) 0%, var(--color-primary-600) 100%);
+}
+
+.metric-card-success::before {
+  background: linear-gradient(180deg, var(--color-success-400) 0%, var(--color-success-600) 100%);
+}
+
+.metric-card-warning::before {
+  background: linear-gradient(180deg, var(--color-warning-400) 0%, var(--color-warning-600) 100%);
+}
+
+.metric-card-danger::before {
+  background: linear-gradient(180deg, var(--color-danger-400) 0%, var(--color-danger-600) 100%);
+}
+
+.metric-card-info::before {
+  background: linear-gradient(180deg, var(--color-info-400) 0%, var(--color-info-600) 100%);
+}
+
+.metric-card-purple::before {
+  background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+}
+
+/* 메트릭 카드 아이콘 */
+.metric-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.metric-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 메트릭 값 */
+.metric-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  font-family: var(--font-mono);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+/* 메트릭 레이블 */
+.metric-card-label {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  font-weight: 500;
+}
+
+/* 메트릭 변화량 표시 */
+.metric-card-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.metric-card-change.positive {
+  background-color: var(--color-success-50);
+  color: var(--color-success-700);
+}
+
+.metric-card-change.negative {
+  background-color: var(--color-danger-50);
+  color: var(--color-danger-700);
+}
+
+/* 위젯 카드 - 차트나 복잡한 콘텐츠를 담는 카드 */
+.widget-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+
+.widget-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.widget-card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.widget-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.widget-card-body {
+  padding: 1.5rem;
+}
+
+/* 리스트 카드 아이템 */
+.list-card-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-neutral-100);
+  transition: background-color 0.2s;
+}
+
+.list-card-item:last-child {
+  border-bottom: none;
+}
+
+.list-card-item:hover {
+  background-color: var(--color-neutral-50);
+}
+
+/* 인포 카드 - 간단한 정보 표시용 */
+.info-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.info-card-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-info-600);
+  flex-shrink: 0;
+}
+
+.info-card-content {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--color-info-900);
+  line-height: 1.5;
+}

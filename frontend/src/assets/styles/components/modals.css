@@ -1,0 +1,228 @@
+/* ============================================
+   Components: Modals
+   모달 다이얼로그 컴포넌트
+   ============================================ */
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  padding: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--duration-normal);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 모달 컨테이너 */
+.modal {
+  position: relative;
+  background-color: var(--color-bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95);
+  transition: transform var(--duration-normal);
+  z-index: var(--z-modal);
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1);
+}
+
+/* 모달 크기 */
+.modal-sm {
+  max-width: 400px;
+}
+
+.modal-md {
+  max-width: 600px;
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+.modal-xl {
+  max-width: 1200px;
+}
+
+.modal-full {
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-neutral-200);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-500);
+  transition: all var(--duration-fast);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+/* 모달 본문 */
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* 모달 푸터 */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-neutral-200);
+  flex-shrink: 0;
+}
+
+.modal-footer-center {
+  justify-content: center;
+}
+
+.modal-footer-between {
+  justify-content: space-between;
+}
+
+/* ============================================
+   확인 다이얼로그
+   ============================================ */
+.modal-confirm {
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-confirm-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-confirm-icon.warning {
+  background-color: var(--color-warning-100);
+  color: var(--color-warning-600);
+}
+
+.modal-confirm-icon.danger {
+  background-color: var(--color-danger-100);
+  color: var(--color-danger-600);
+}
+
+.modal-confirm-icon.success {
+  background-color: var(--color-success-100);
+  color: var(--color-success-600);
+}
+
+.modal-confirm-icon.info {
+  background-color: var(--color-info-100);
+  color: var(--color-info-600);
+}
+
+.modal-confirm-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.5rem;
+}
+
+.modal-confirm-message {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  line-height: 1.5;
+}
+
+/* ============================================
+   사이드 모달 (Drawer)
+   ============================================ */
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 100%;
+  background-color: var(--color-bg-primary);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--duration-normal);
+}
+
+.drawer-right {
+  right: 0;
+  transform: translateX(100%);
+}
+
+.drawer-left {
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.drawer.active {
+  transform: translateX(0);
+}
+
+.drawer-header,
+.drawer-body,
+.drawer-footer {
+  padding: 1.5rem;
+}
+
+.drawer-header {
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.drawer-footer {
+  border-top: 1px solid var(--color-neutral-200);
+}
+

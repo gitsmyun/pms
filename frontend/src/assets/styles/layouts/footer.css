@@ -1,0 +1,213 @@
+/* ============================================
+   Layout: Footer
+   최신 기업형 웹 프로젝트 푸터 - main-content 내부 하단 배치
+   ============================================ */
+
+/* 푸터 컨테이너 - main-content 내부 하단에 위치 */
+/* sidebar-footer와 동일한 높이로 조정 (2026-02-11) */
+.app-footer {
+  background-color: var(--color-bg-primary);
+  border-top: 1px solid var(--color-neutral-200);
+  padding: 0.45rem 1.5rem; /* 위아래 8px - sidebar-footer와 동일 */
+  width: 100%;
+  margin-top: auto; /* flex: 1인 page-content 아래로 밀기 */
+  flex-shrink: 0; /* footer 높이 고정 */
+}
+
+.footer-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%; /* 반응형을 위한 전체 너비 */
+}
+
+/* 반응형: footer-content 너비 조정 */
+@media (max-width: 1440px) {
+  .footer-content {
+    max-width: 1200px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .footer-content {
+    max-width: 1024px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .footer-content {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    padding: 0 0.5rem;
+  }
+
+  .app-footer {
+    padding: 0.5rem 1rem; /* 좌우 padding 축소 */
+  }
+}
+
+/* 푸터 상단 - 링크 섹션 */
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.5rem;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-link {
+  font-size: 0.8125rem;
+  color: var(--color-neutral-600);
+  transition: color var(--duration-fast);
+}
+
+.footer-link:hover {
+  color: var(--color-primary-600);
+}
+
+/* 푸터 하단 - 저작권 정보 */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-neutral-200);
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%; /* 전체 너비 사용 */
+}
+
+.footer-copyright {
+  font-size: 0.8125rem;
+  color: var(--color-neutral-500);
+  white-space: nowrap; /* 한 줄 유지 */
+}
+
+/* 반응형: 작은 화면에서 copyright 폰트 축소 */
+@media (max-width: 480px) {
+  .footer-copyright {
+    font-size: 0.75rem;
+    white-space: normal; /* 작은 화면에서는 줄바꿈 허용 */
+  }
+}
+
+.footer-links-inline {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.footer-link-inline {
+  font-size: 0.8125rem;
+  color: var(--color-neutral-600);
+  transition: color var(--duration-fast);
+}
+
+.footer-link-inline:hover {
+  color: var(--color-primary-600);
+}
+
+/* 소셜 링크 */
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-social-link {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-fast);
+}
+
+.footer-social-link:hover {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+}
+
+/* 컴팩트 푸터 (간단한 버전) */
+/* app-footer의 padding을 사용하므로 추가 padding 불필요 (2026-02-11) */
+.footer-compact {
+  /* padding 제거 - app-footer에서 이미 0.5rem 적용됨 */
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px; /* sidebar-footer 링크 높이와 일치 (0.625rem * 2 + line-height) */
+}
+
+.footer-compact .footer-copyright {
+  font-size: 0.75rem;
+  line-height: 1.5; /* 가독성 향상 */
+}
+
+.footer-compact .footer-bottom {
+  padding-top: 0; /* 컴팩트 버전은 상단 padding 불필요 */
+  border-top: none; /* 컴팩트 버전은 border 불필요 */
+}
+
+/* 반응형: 태블릿 */
+@media (max-width: 768px) {
+  .footer-top {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem; /* 간격 축소 */
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem; /* 간격 축소 */
+  }
+
+  .footer-links-inline {
+    justify-content: center;
+  }
+
+  .footer-social {
+    justify-content: center;
+  }
+}
+
+/* 반응형: 모바일 */
+@media (max-width: 480px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .footer-bottom {
+    gap: 0.5rem;
+  }
+}
+

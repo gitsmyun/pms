@@ -1,0 +1,398 @@
+/* ============================================
+   Components: Buttons
+   다양한 스타일과 크기의 버튼 컴포넌트
+   ============================================ */
+
+/* 기본 버튼 스타일 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   버튼 변형 (Variants)
+   ============================================ */
+
+/* Primary 버튼 */
+.btn-primary {
+  background-color: var(--color-primary-600);
+  color: white;
+  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.05);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-700);
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.15);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-primary-800);
+}
+
+/* Secondary 버튼 */
+.btn-secondary {
+  background-color: var(--color-secondary-500);
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-secondary-600);
+}
+
+/* Success 버튼 */
+.btn-success {
+  background-color: var(--color-success-500);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: var(--color-success-600);
+}
+
+/* Danger 버튼 */
+.btn-danger {
+  background-color: var(--color-danger-500);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-600);
+}
+
+/* Warning 버튼 */
+.btn-warning {
+  background-color: var(--color-warning-500);
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background-color: var(--color-warning-600);
+}
+
+/* Info 버튼 */
+.btn-info {
+  background-color: var(--color-info-500);
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background-color: var(--color-info-600);
+}
+
+/* ============================================
+   아웃라인 버튼
+   ============================================ */
+.btn-outline-primary {
+  background-color: transparent;
+  border-color: var(--color-primary-600);
+  color: var(--color-primary-600);
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-50);
+}
+
+.btn-outline-secondary {
+  background-color: transparent;
+  border-color: var(--color-secondary-400);
+  color: var(--color-secondary-700);
+}
+
+.btn-outline-secondary:hover:not(:disabled) {
+  background-color: var(--color-secondary-50);
+}
+
+.btn-outline-success {
+  background-color: transparent;
+  border-color: var(--color-success-500);
+  color: var(--color-success-600);
+}
+
+.btn-outline-success:hover:not(:disabled) {
+  background-color: var(--color-success-50);
+}
+
+.btn-outline-danger {
+  background-color: transparent;
+  border-color: var(--color-danger-500);
+  color: var(--color-danger-600);
+}
+
+.btn-outline-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-50);
+}
+
+/* ============================================
+   고스트 버튼 (배경 없음)
+   ============================================ */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-neutral-700);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+.btn-ghost-primary {
+  background-color: transparent;
+  color: var(--color-primary-600);
+}
+
+.btn-ghost-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-50);
+}
+
+/* ============================================
+   링크 버튼
+   ============================================ */
+.btn-link {
+  background-color: transparent;
+  color: var(--color-primary-600);
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+
+.btn-link:hover:not(:disabled) {
+  color: var(--color-primary-700);
+  text-decoration: underline;
+}
+
+/* ============================================
+   버튼 크기
+   ============================================ */
+.btn-xs {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  border-radius: 6px;
+}
+
+.btn-sm {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  border-radius: 6px;
+}
+
+.btn-md {
+  /* 기본 크기 (위에 정의된 .btn과 동일) */
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  border-radius: 10px;
+}
+
+.btn-xl {
+  padding: 0.875rem 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  border-radius: 12px;
+}
+
+/* ============================================
+   전체 너비 버튼
+   ============================================ */
+.btn-block {
+  width: 100%;
+  display: flex;
+}
+
+/* ============================================
+   아이콘 전용 버튼
+   ============================================ */
+.btn-icon {
+  padding: 0.625rem;
+  width: 36px;
+  height: 36px;
+}
+
+.btn-icon.btn-sm {
+  width: 32px;
+  height: 32px;
+  padding: 0.5rem;
+}
+
+.btn-icon.btn-lg {
+  width: 44px;
+  height: 44px;
+  padding: 0.75rem;
+}
+
+/* ============================================
+   버튼 그룹
+   ============================================ */
+.btn-group {
+  display: inline-flex;
+  gap: 0;
+}
+
+.btn-group .btn {
+  border-radius: 0;
+  border-right-width: 0;
+}
+
+.btn-group .btn:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.btn-group .btn:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-right-width: 1px;
+}
+
+.btn-group .btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+/* ============================================
+   로딩 상태
+   ============================================ */
+.btn-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   특수 버튼 스타일
+   ============================================ */
+
+/* 그래디언트 버튼 */
+.btn-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+  color: white;
+  border: none;
+}
+
+.btn-gradient-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-900) 100%);
+  box-shadow: 0 8px 16px -4px rgba(37, 99, 235, 0.3);
+}
+
+.btn-gradient-success {
+  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-700) 100%);
+  color: white;
+  border: none;
+}
+
+.btn-gradient-success:hover:not(:disabled) {
+  box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.3);
+}
+
+/* 부드러운 버튼 (Soft) */
+.btn-soft-primary {
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  border-color: transparent;
+}
+
+.btn-soft-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+}
+
+.btn-soft-success {
+  background-color: var(--color-success-50);
+  color: var(--color-success-700);
+  border-color: transparent;
+}
+
+.btn-soft-success:hover:not(:disabled) {
+  background-color: var(--color-success-100);
+}
+
+.btn-soft-danger {
+  background-color: var(--color-danger-50);
+  color: var(--color-danger-700);
+  border-color: transparent;
+}
+
+.btn-soft-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-100);
+}
+
+.btn-soft-warning {
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-700);
+  border-color: transparent;
+}
+
+.btn-soft-warning:hover:not(:disabled) {
+  background-color: var(--color-warning-100);
+}
+
+/* ============================================
+   플로팅 액션 버튼 (FAB)
+   ============================================ */
+.btn-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  z-index: var(--z-fixed);
+}
+
+.btn-fab:hover:not(:disabled) {
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .btn-fab {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+}
+

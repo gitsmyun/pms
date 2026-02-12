@@ -1,0 +1,446 @@
+/* ============================================
+   Charts: ECharts Theme Customization
+   ECharts 차트 컴포넌트 스타일 커스터마이징
+   ============================================ */
+
+/* 차트 컨테이너 */
+.chart-container {
+  width: 100%;
+  height: auto; /* 높이는 내부 컨텐츠에 따라 자동 조정 */
+  padding: 1.5rem;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 12px;
+  overflow: hidden; /* 차트가 카드를 벗어나지 않도록 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s;
+}
+
+.chart-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.chart-container-sm {
+  min-height: 280px; /* 최소 높이로 변경 */
+}
+
+.chart-container-md {
+  min-height: 380px; /* 최소 높이로 변경 */
+}
+
+.chart-container-lg {
+  min-height: 530px; /* 최소 높이로 변경 */
+}
+
+.chart-container-xl {
+  min-height: 630px; /* 최소 높이로 변경 */
+}
+
+/* 차트 헤더 */
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.chart-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.chart-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  margin-top: 0.25rem;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-neutral-700);
+}
+
+.chart-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* 차트 툴바 (필터, 다운로드 등) */
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-toolbar-btn {
+  padding: 0.375rem;
+  border-radius: 6px;
+  color: var(--color-neutral-600);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.chart-toolbar-btn:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+/* ============================================
+   ECharts 기본 색상 팔레트
+   (JavaScript에서 ECharts 옵션으로 적용)
+   ============================================ */
+:root {
+  /* Primary 차트 색상 */
+  --chart-color-1: #2563eb;  /* Primary Blue */
+  --chart-color-2: #10b981;  /* Success Green */
+  --chart-color-3: #f59e0b;  /* Warning Orange */
+  --chart-color-4: #ef4444;  /* Danger Red */
+  --chart-color-5: #06b6d4;  /* Info Cyan */
+  --chart-color-6: #8b5cf6;  /* Purple */
+  --chart-color-7: #ec4899;  /* Pink */
+  --chart-color-8: #64748b;  /* Gray */
+
+  /* 그래디언트 색상 */
+  --chart-gradient-primary-start: rgba(37, 99, 235, 0.8);
+  --chart-gradient-primary-end: rgba(37, 99, 235, 0.1);
+
+  --chart-gradient-success-start: rgba(16, 185, 129, 0.8);
+  --chart-gradient-success-end: rgba(16, 185, 129, 0.1);
+
+  /* 차트 배경/텍스트 */
+  --chart-bg-color: #ffffff;
+  --chart-text-color: #27272a;
+  --chart-axis-color: #e4e4e7;
+  --chart-grid-color: #f4f4f5;
+}
+
+/* ============================================
+   통계 위젯 (차트 + 숫자)
+   ============================================ */
+.stat-widget {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.stat-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.stat-widget-title {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  font-weight: 500;
+}
+
+.stat-widget-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+}
+
+.stat-widget-change {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.stat-widget-change.positive,
+.stat-widget-change.up {
+  color: var(--color-success-600);
+}
+
+.stat-widget-change.negative,
+.stat-widget-change.down {
+  color: var(--color-danger-600);
+}
+
+.stat-widget-chart {
+  height: 80px;
+}
+
+/* ============================================
+   미니 차트 (스파크라인)
+   ============================================ */
+.mini-chart {
+  width: 100%;
+  height: 60px;
+}
+
+.mini-chart-inline {
+  display: inline-block;
+  width: 120px;
+  height: 40px;
+  vertical-align: middle;
+}
+
+/* ============================================
+   도넛 차트 중앙 텍스트
+   ============================================ */
+.donut-chart-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-chart-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.donut-chart-label {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+}
+
+/* ============================================
+   차트 로딩 상태
+   ============================================ */
+.chart-loading {
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-neutral-200);
+  border-top-color: var(--color-primary-600);
+  border-radius: 50%;
+  animation: chart-spinner 0.6s linear infinite;
+}
+
+@keyframes chart-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   차트 빈 상태
+   ============================================ */
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  color: var(--color-neutral-500);
+}
+
+.chart-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+  color: var(--color-neutral-400);
+}
+
+.chart-empty-text {
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   비교 차트 레이아웃
+   ============================================ */
+.chart-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .chart-comparison {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   차트 필터 패널
+   ============================================ */
+.chart-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 0rem;
+  flex-wrap: wrap;
+}
+
+.chart-filter-label {
+  font-size: 0.875rem;
+  color: var(--color-neutral-700);
+  font-weight: 500;
+}
+
+.chart-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-filter-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--color-neutral-300);
+  border-radius: 6px;
+  background-color: var(--color-bg-primary);
+  color: var(--color-neutral-700);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.chart-filter-btn:hover {
+  background-color: var(--color-neutral-100);
+}
+
+.chart-filter-btn.active {
+  background-color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+  color: white;
+}
+
+.chart-filter-btn.active {
+  background-color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+  color: white;
+}
+
+/* ============================================
+   진행률 바 (Progress Bar)
+   ============================================ */
+.progress {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-neutral-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-lg {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.progress-sm {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--color-primary-600);
+  transition: width var(--duration-normal);
+  border-radius: inherit;
+}
+
+.progress-bar-success {
+  background-color: var(--color-success-500);
+}
+
+.progress-bar-danger {
+  background-color: var(--color-danger-500);
+}
+
+.progress-bar-warning {
+  background-color: var(--color-warning-500);
+}
+
+.progress-bar-info {
+  background-color: var(--color-info-500);
+}
+
+/* 그래디언트 진행률 바 */
+.progress-bar-gradient {
+  background: linear-gradient(to right, var(--color-primary-600), var(--color-primary-800));
+}
+
+/* 애니메이션 진행률 바 */
+.progress-bar-animated {
+  background-size: 20px 20px;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  animation: progress-stripes 1s linear infinite;
+}
+
+@keyframes progress-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+/* ============================================
+   스케일 표시기 (Gauge/Meter)
+   ============================================ */
+.gauge {
+  position: relative;
+  width: 200px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.gauge-value {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-neutral-900);
+}
+
+.gauge-label {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  white-space: nowrap;
+}
+

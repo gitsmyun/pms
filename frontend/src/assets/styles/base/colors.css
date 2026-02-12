@@ -1,0 +1,164 @@
+/* ============================================
+   Base: Color System
+   시맨틱 색상 유틸리티 클래스
+   ============================================ */
+
+/* 텍스트 색상 - Primary */
+.text-primary { color: var(--color-primary-600); }
+.text-primary-light { color: var(--color-primary-400); }
+.text-primary-dark { color: var(--color-primary-800); }
+
+/* 텍스트 색상 - Secondary */
+.text-secondary { color: var(--color-secondary-500); }
+.text-secondary-light { color: var(--color-secondary-400); }
+.text-secondary-dark { color: var(--color-secondary-700); }
+
+/* 텍스트 색상 - Success */
+.text-success { color: var(--color-success-500); }
+.text-success-dark { color: var(--color-success-700); }
+
+/* 텍스트 색상 - Danger */
+.text-danger { color: var(--color-danger-500); }
+.text-danger-dark { color: var(--color-danger-700); }
+
+/* 텍스트 색상 - Warning */
+.text-warning { color: var(--color-warning-500); }
+.text-warning-dark { color: var(--color-warning-700); }
+
+/* 텍스트 색상 - Info */
+.text-info { color: var(--color-info-500); }
+.text-info-dark { color: var(--color-info-700); }
+
+/* 텍스트 색상 - Neutral */
+.text-muted { color: var(--color-neutral-500); }
+.text-body { color: var(--color-neutral-800); }
+
+/* 배경 색상 - Primary */
+.bg-primary { background-color: var(--color-primary-600); }
+.bg-primary-light { background-color: var(--color-primary-100); }
+.bg-primary-dark { background-color: var(--color-primary-800); }
+
+/* 배경 색상 - Secondary */
+.bg-secondary { background-color: var(--color-secondary-500); }
+.bg-secondary-light { background-color: var(--color-secondary-100); }
+.bg-secondary-dark { background-color: var(--color-secondary-700); }
+
+/* 배경 색상 - Success */
+.bg-success { background-color: var(--color-success-500); }
+.bg-success-light { background-color: var(--color-success-50); }
+
+/* 배경 색상 - Danger */
+.bg-danger { background-color: var(--color-danger-500); }
+.bg-danger-light { background-color: var(--color-danger-50); }
+
+/* 배경 색상 - Warning */
+.bg-warning { background-color: var(--color-warning-500); }
+.bg-warning-light { background-color: var(--color-warning-50); }
+
+/* 배경 색상 - Info */
+.bg-info { background-color: var(--color-info-500); }
+.bg-info-light { background-color: var(--color-info-50); }
+
+/* 배경 색상 - Neutral */
+.bg-white { background-color: var(--color-bg-primary); }
+.bg-gray { background-color: var(--color-bg-secondary); }
+.bg-gray-light { background-color: var(--color-bg-tertiary); }
+
+/* 테두리 색상 - Primary */
+.border-primary { border-color: var(--color-primary-600); }
+.border-primary-light { border-color: var(--color-primary-300); }
+
+/* 테두리 색상 - Secondary */
+.border-secondary { border-color: var(--color-secondary-300); }
+.border-gray { border-color: var(--color-neutral-200); }
+
+/* 테두리 색상 - Semantic */
+.border-success { border-color: var(--color-success-500); }
+.border-danger { border-color: var(--color-danger-500); }
+.border-warning { border-color: var(--color-warning-500); }
+.border-info { border-color: var(--color-info-500); }
+
+/* 그래디언트 배경 */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--color-secondary-500) 0%, var(--color-secondary-700) 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-700) 100%);
+}
+
+.bg-gradient-warm {
+  background: linear-gradient(135deg, var(--color-warning-500) 0%, var(--color-danger-500) 100%);
+}
+
+.bg-gradient-cool {
+  background: linear-gradient(135deg, var(--color-info-500) 0%, var(--color-primary-600) 100%);
+}
+
+/* 오버레이 (모달 배경 등) */
+.overlay-dark {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-light {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 호버 효과 */
+.hover-bg-primary:hover {
+  background-color: var(--color-primary-700);
+}
+
+.hover-bg-secondary:hover {
+  background-color: var(--color-secondary-600);
+}
+
+.hover-bg-gray:hover {
+  background-color: var(--color-neutral-100);
+}
+
+/* 색상 조합 프리셋 - 카드에 사용 */
+.theme-blue {
+  border-left: 4px solid var(--color-primary-600);
+  background-color: var(--color-primary-50);
+}
+
+.theme-green {
+  border-left: 4px solid var(--color-success-600);
+  background-color: var(--color-success-50);
+}
+
+.theme-red {
+  border-left: 4px solid var(--color-danger-600);
+  background-color: var(--color-danger-50);
+}
+
+.theme-yellow {
+  border-left: 4px solid var(--color-warning-600);
+  background-color: var(--color-warning-50);
+}
+
+.theme-cyan {
+  border-left: 4px solid var(--color-info-600);
+  background-color: var(--color-info-50);
+}
+
+.theme-purple {
+  border-left: 4px solid #8b5cf6;
+  background-color: #f5f3ff;
+}
+
+.theme-pink {
+  border-left: 4px solid #ec4899;
+  background-color: #fdf2f8;
+}
+
+.theme-gray {
+  border-left: 4px solid var(--color-secondary-600);
+  background-color: var(--color-secondary-50);
+}
+

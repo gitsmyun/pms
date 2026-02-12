@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMS - 메인 대시보드</title>
+  <!--
+    ⚠️ Vite 개발 서버 실행 방법:
+    1. 터미널: cd frontend && pnpm dev
+    2. 브라우저: http://localhost:5173/samples/01-dashboard.html
+  -->
+  <script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+  <!-- 제미나이 스타일 레이아웃 -->
+  <div class="app-layout">
+    <!-- 메인 영역 (사이드바 + 컨텐츠) -->
+    <div class="app-main">
+      <!-- 좌측 사이드바 -->
+      <aside class="sidebar" id="sidebar">
+      <!-- 사이드바 헤더 -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo" onclick="toggleSidebar()">
+          <div class="sidebar-logo-icon">P</div>
+          <span class="sidebar-logo-text">PMS</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 네비게이션 -->
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">메인</div>
+
+          <div class="nav-item">
+            <a href="01-dashboard.html" class="nav-link active" data-tooltip="대시보드">
+              <span class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                </svg>
+              </span>
+              <span class="nav-text">대시보드</span>
+            </a>
+          </div>
+
+          <div class="nav-item">
+            <a href="02-statistics.html" class="nav-link" data-tooltip="프로젝트 진척">
+              <span class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                </svg>
+              </span>
+              <span class="nav-text">프로젝트 진척</span>
+            </a>
+          </div>
+
+          <div class="nav-item">
+            <a href="03-todo.html" class="nav-link" data-tooltip="TODO 리스트">
+              <span class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+              </span>
+              <span class="nav-text">TODO 리스트</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">프로젝트</div>
+
+          <div class="nav-item">
+            <div class="nav-link" data-tooltip="프로젝트 관리">
+              <span class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                  <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                </svg>
+              </span>
+              <span class="nav-text">프로젝트 관리</span>
+              <span class="nav-arrow">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </span>
+            </div>
+            <div class="nav-submenu">
+              <a href="#" class="nav-link">
+                <span class="nav-text">프로젝트 목록</span>
+              </a>
+              <a href="#" class="nav-link">
+                <span class="nav-text">새 프로젝트</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- 사이드바 푸터 -->
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-footer-link" data-tooltip="설정">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+            </svg>
+          </span>
+          <span class="nav-text">설정</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+      <!-- 헤더 (제미나이 스타일 - 오른쪽에 사용자 정보만) -->
+      <header class="main-header">
+        <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+
+        <!-- 알림 -->
+        <div class="header-icon-btn">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+          </svg>
+          <span class="header-icon-badge">3</span>
+        </div>
+
+        <!-- 사용자 메뉴 -->
+        <div class="user-menu" onclick="toggleUserMenu()">
+          <div class="user-menu-trigger">
+            <div class="user-avatar">
+              <img src="https://via.placeholder.com/36" alt="User">
+            </div>
+            <div class="user-info">
+              <div class="user-name">윤성민</div>
+              <div class="user-role">관리자</div>
+            </div>
+            <span class="user-menu-arrow">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+          </div>
+
+          <!-- 드롭다운 메뉴 -->
+          <div class="user-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-name">윤성민</div>
+              <div class="user-dropdown-email">admin@pms.com</div>
+            </div>
+            <div class="user-dropdown-menu">
+              <a class="user-dropdown-item">
+                <span class="user-dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                  </svg>
+                </span>
+                <span>프로필</span>
+              </a>
+              <a class="user-dropdown-item">
+                <span class="user-dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                  </svg>
+                </span>
+                <span>설정</span>
+              </a>
+              <div class="user-dropdown-divider"></div>
+              <a class="user-dropdown-item danger">
+                <span class="user-dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                  </svg>
+                </span>
+                <span>로그아웃</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        </header>
+
+        <!-- 페이지 컨텐츠 -->
+        <div class="page-content">
+          <!-- 페이지 헤더 -->
+          <div class="page-header">
+        <!-- 페이지 헤더 -->
+        <div class="page-header">
+          <div class="page-title-wrapper">
+            <h1 class="text-h2">대시보드</h1>
+          </div>
+          <p class="page-description">프로젝트 현황을 한눈에 확인하세요</p>
+        </div>
+
+        <!-- KPI 카드 그리드 -->
+        <div class="grid grid-cols-4 md:grid-cols-2 gap-4 mb-8">
+          <!-- 통계 카드 1 -->
+          <div class="stat-card stat-card-primary">
+            <div class="stat-card-header">
+              <span class="stat-card-title">진행중인 프로젝트</span>
+              <div class="stat-card-icon">
+                <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card-value">24</div>
+            <div class="stat-card-footer">
+              <div class="stat-card-trend up">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>12%</span>
+              </div>
+              <span class="stat-card-period">지난달 대비</span>
+            </div>
+          </div>
+
+          <!-- 통계 카드 2 -->
+          <div class="stat-card stat-card-success">
+            <div class="stat-card-header">
+              <span class="stat-card-title">완료된 작업</span>
+              <div class="stat-card-icon">
+                <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card-value">1,247</div>
+            <div class="stat-card-footer">
+              <div class="stat-card-trend up">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>8%</span>
+              </div>
+              <span class="stat-card-period">지난달 대비</span>
+            </div>
+          </div>
+
+          <!-- 통계 카드 3 -->
+          <div class="stat-card stat-card-warning">
+            <div class="stat-card-header">
+              <span class="stat-card-title">팀 멤버</span>
+              <div class="stat-card-icon">
+                <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card-value">48</div>
+            <div class="stat-card-footer">
+              <span class="stat-card-period">변동 없음</span>
+            </div>
+          </div>
+
+          <!-- 통계 카드 4 -->
+          <div class="stat-card stat-card-danger">
+            <div class="stat-card-header">
+              <span class="stat-card-title">지연된 작업</span>
+              <div class="stat-card-icon">
+                <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card-value">3</div>
+            <div class="stat-card-footer">
+              <div class="stat-card-trend down">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>1개 증가</span>
+              </div>
+              <span class="stat-card-period">전일 대비</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 차트 & 최근 활동 -->
+        <div class="dashboard-grid mb-8">
+          <!-- 차트 영역 -->
+          <div class="widget-lg">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">프로젝트 진행 현황</h3>
+              </div>
+              <div class="card-body">
+                <div class="chart-container" style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); display: flex; align-items: center; justify-content: center; color: #7c3aed; font-weight: 600; border-radius: 8px;">
+                  📊 ECharts 차트 영역 (여기에 실제 차트 삽입)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 최근 활동 -->
+          <div class="widget-sm">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">최근 활동</h3>
+              </div>
+              <div class="card-body">
+                <div class="card-list">
+                  <div class="card-list-item">
+                    <div class="card-list-item-header">
+                      <div class="card-list-item-title">프로젝트 생성</div>
+                      <div class="card-list-item-meta">5분 전</div>
+                    </div>
+                    <div class="card-list-item-body">
+                      새로운 고객 포털 프로젝트가 시작되었습니다
+                    </div>
+                  </div>
+                  <div class="card-list-item">
+                    <div class="card-list-item-header">
+                      <div class="card-list-item-title">작업 완료</div>
+                      <div class="card-list-item-meta">1시간 전</div>
+                    </div>
+                    <div class="card-list-item-body">
+                      UI 디자인 작업이 완료되었습니다
+                    </div>
+                  </div>
+                  <div class="card-list-item">
+                    <div class="card-list-item-header">
+                      <div class="card-list-item-title">팀원 추가</div>
+                      <div class="card-list-item-meta">3시간 전</div>
+                    </div>
+                    <div class="card-list-item-body">
+                      김철수님이 팀에 합류했습니다
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 프로젝트 목록 테이블 -->
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">프로젝트 목록</h2>
+            <button class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+              </svg>
+              새 프로젝트
+            </button>
+          </div>
+
+          <div class="table-wrapper">
+            <div class="table-toolbar">
+              <div class="table-toolbar-left">
+                <div class="form-search">
+                  <input type="text" class="form-input form-search-input" placeholder="검색...">
+                  <span class="form-search-icon">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>프로젝트명</th>
+                  <th>담당자</th>
+                  <th>진행률</th>
+                  <th>상태</th>
+                  <th>마감일</th>
+                  <th>액션</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="text-body font-semibold">고객 포털 개발</div>
+                    <div class="text-body-sm text-muted">웹 애플리케이션</div>
+                  </td>
+                  <td>김철수</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div class="progress" style="width: 100px;">
+                        <div class="progress-bar" style="width: 75%;"></div>
+                      </div>
+                      <span class="text-body-sm">75%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="table-badge table-badge-success">진행중</span>
+                  </td>
+                  <td>2026-03-15</td>
+                  <td>
+                    <div class="table-actions">
+                      <button class="table-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                        </svg>
+                      </button>
+                      <button class="table-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text-body font-semibold">모바일 앱 리뉴얼</div>
+                    <div class="text-body-sm text-muted">iOS & Android</div>
+                  </td>
+                  <td>이영희</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div class="progress" style="width: 100px;">
+                        <div class="progress-bar" style="width: 45%;"></div>
+                      </div>
+                      <span class="text-body-sm">45%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="table-badge table-badge-warning">검토중</span>
+                  </td>
+                  <td>2026-04-01</td>
+                  <td>
+                    <div class="table-actions">
+                      <button class="table-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                        </svg>
+                      </button>
+                      <button class="table-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      </div><!-- page-content 종료 -->
+
+      <!-- 푸터 (main-content 내부 하단) -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <div class="footer-bottom footer-compact">
+            <div class="footer-copyright">
+              © 2026 PMS. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+    </div><!-- app-main 종료 -->
+  </div><!-- app-layout 종료 -->
+
+  <!-- JavaScript -->
+  <script>
+    // 사이드바 토글
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('collapsed');
+    }
+
+    // 모바일 사이드바 토글
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    // 사용자 메뉴 토글
+    function toggleUserMenu() {
+      const userMenu = document.querySelector('.user-menu');
+      userMenu.classList.toggle('open');
+    }
+
+    // 외부 클릭시 드롭다운 닫기
+    document.addEventListener('click', function(event) {
+      const userMenu = document.querySelector('.user-menu');
+      if (userMenu && !userMenu.contains(event.target)) {
+        userMenu.classList.remove('open');
+      }
+    });
+
+    // 서브메뉴 토글
+    document.querySelectorAll('.nav-item > .nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const parent = this.parentElement;
+        const submenu = parent.querySelector('.nav-submenu');
+
+        if (submenu) {
+          e.preventDefault();
+          parent.classList.toggle('expanded');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

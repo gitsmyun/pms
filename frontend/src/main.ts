@@ -6,13 +6,13 @@
  *
  * @author 윤성민 책임
  * @since 2026-01-05
- * @updated 2026-01-19 - 상세 디버깅 및 IP 접속 지원 강화
+ * @updated 2026-02-11 - 샘플 HTML → Vue 컴포넌트 전환 완료
  */
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import keycloak from './keycloak'
-import './style.css'
+import './assets/styles/index.css'
 
 /**
  * 🔍 브라우저 환경 상세 진단
@@ -26,7 +26,9 @@ console.log('  - Origin:', window.location.origin)
 console.log('  - Hostname:', window.location.hostname)
 console.log('  - Protocol:', window.location.protocol)
 console.log('  - Port:', window.location.port)
+console.log('  - Pathname:', window.location.pathname)
 console.log('')
+
 console.log('🔒 [보안 컨텍스트 확인]')
 console.log('  - Secure Context:', window.isSecureContext)
 console.log('  - Crypto API:', !!window.crypto)
@@ -205,6 +207,7 @@ keycloak.init(initOptions).then((authenticated) => {
   router.isReady().then(() => {
     console.log('')
     console.log('🧹 [URL 정리] Vue Router 준비 완료, URL 정리 시작')
+
 
     // OAuth 파라미터 확인
     const urlParams = new URLSearchParams(window.location.search)

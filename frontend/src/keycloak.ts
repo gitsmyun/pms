@@ -35,7 +35,8 @@ const getKeycloakUrl = (): string => {
   // 10.127.6.102 → 10.127.6.102/keycloak (직접 접속)
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     console.log('✅ [Keycloak Config] 로컬 개발 환경 - 개발서버 Keycloak 사용')
-    return `${protocol}//10.127.6.102/keycloak`
+    // ✅ 2026-02-10: Ingress가 HTTPS로 리다이렉트하므로 HTTPS 사용
+    return `https://10.127.6.102/keycloak`
   }
 
   console.log('✅ [Keycloak Config] 개발서버 환경 - 상대 경로 사용')

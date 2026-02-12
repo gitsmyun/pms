@@ -1,0 +1,205 @@
+/* ============================================
+   PMS 공통 CSS 시스템 - 메인 진입점
+   Tailwind CSS v4 기반 기업형 웹 프로젝트
+   ============================================ */
+
+@import "tailwindcss";
+
+/* Base Styles - 기본 스타일 */
+@import "./base/reset.css";
+@import "./base/colors.css";
+@import "./base/typography.css";
+
+/* Layout Styles - 레이아웃 (제미나이 스타일) */
+@import "./layouts/sidebar.css";
+@import "./layouts/header.css";
+@import "./layouts/grid.css";
+@import "./layouts/footer.css";
+
+/* Component Styles - 컴포넌트 */
+@import "./components/buttons.css";
+@import "./components/cards.css";
+@import "./components/forms.css";
+@import "./components/tables.css";
+@import "./components/modals.css";
+@import "./components/badges.css";
+@import "./components/dropdowns.css";
+@import "./components/drag-drop.css";
+
+/* Chart Styles - 차트 */
+@import "./charts/echarts-theme.css";
+
+/* Utility Styles - 유틸리티 */
+@import "./utilities/animations.css";
+@import "./utilities/helpers.css";
+
+/* ============================================
+   Tailwind v4 커스텀 테마 설정
+   ============================================ */
+@theme {
+  /* 색상 팔레트 - 기업 CI 파란색 기반 */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb; /* 메인 파란색 */
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b; /* 슬레이트 회색 */
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0; /* 에메랄드 - 경계선 */
+  --color-success-400: #34d399; /* 에메랄드 - 밝은 강조 */
+  --color-success-500: #10b981; /* 에메랄드 - 성공 */
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46; /* 에메랄드 - 진한 텍스트 */
+
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca; /* 빨간색 - 경계선 */
+  --color-danger-400: #f87171; /* 빨간색 - 밝은 강조 */
+  --color-danger-500: #ef4444; /* 빨간색 - 경고 */
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b; /* 빨간색 - 진한 텍스트 */
+
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a; /* 황색 - 경계선 */
+  --color-warning-400: #fbbf24; /* 황색 - 밝은 강조 */
+  --color-warning-500: #f59e0b; /* 황색 - 주의 */
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e; /* 황색 - 진한 텍스트 */
+
+  --color-info-50: #f0f9ff;
+  --color-info-100: #e0f2fe;
+  --color-info-200: #bae6fd; /* 청록색 - 경계선 */
+  --color-info-400: #38bdf8; /* 청록색 - 밝은 강조 */
+  --color-info-500: #06b6d4; /* 청록색 - 정보 */
+  --color-info-600: #0891b2;
+  --color-info-700: #0e7490;
+  --color-info-800: #155e75; /* 청록색 - 진한 텍스트 */
+  --color-info-900: #164e63; /* 청록색 - 가장 진한 텍스트 */
+
+  /* 중립 색상 */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f4f4f5;
+  --color-neutral-200: #e4e4e7;
+  --color-neutral-300: #d4d4d8;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-500: #71717a;
+  --color-neutral-600: #52525b;
+  --color-neutral-700: #3f3f46;
+  --color-neutral-800: #27272a;
+  --color-neutral-900: #18181b;
+
+  /* 배경 색상 */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-bg-tertiary: #f1f5f9;
+
+  /* 그림자 */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+  /* 폰트 패밀리 */
+  --font-sans: "Pretendard Variable", "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", monospace;
+
+  /* 브레이크포인트 (Tailwind 기본값) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* 간격 */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  --spacing-xl: 2rem;     /* 32px */
+  --spacing-2xl: 3rem;    /* 48px */
+
+  /* 애니메이션 지속 시간 */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* z-index 레이어 */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* ============================================
+   전역 스타일
+   ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-neutral-800);
+}
+
+/* 스크롤바 커스터마이징 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-400);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-500);
+}
+
+/* Firefox 스크롤바 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-400) var(--color-neutral-100);
+}
+

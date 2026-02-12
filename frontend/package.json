@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('pnpm') === -1) { console.error('\\n⚠️  이 프로젝트는 pnpm을 사용합니다.\\n\\n올바른 명령어: pnpm install\\n자세한 내용: PACKAGE_MANAGER_TROUBLESHOOTING.md\\n'); process.exit(1); }\""
   },
   "dependencies": {
     "axios": "^1.13.2",
+    "echarts": "^5.5.1",
     "keycloak-js": "^26.2.2",
     "vue": "^3.5.24",
+    "vue-echarts": "^7.0.3",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
