@@ -16,7 +16,7 @@ name: ci build and publish
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write  # Git 커밋 권한 (Kustomization 자동 업데이트)
   packages: write
 
 concurrency:
@@ -76,6 +76,35 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/pms-backend:${{ steps.tags.outputs.sha_tag }}
             ghcr.io/${{ github.repository_owner }}/pms-backend:${{ steps.tags.outputs.develop_tag }}
+
+      # 🆕 Kustomization 자동 업데이트
+      - name: Update Kustomization with backend image tag
+        shell: bash
+        run: |
+          cd k8s/overlays/dev
+          
+          # 현재 SHA 추출
+          SHORT_SHA="${GITHUB_SHA::7}"
+          
+          # backend 이미지 태그 업데이트
+          sed -i.bak "/name: ghcr.io\/gitsmyun\/pms-backend/,/newTag:/ s|newTag: .*|newTag: sha-${SHORT_SHA}|" kustomization.yaml
+          rm -f kustomization.yaml.bak
+          
+          # 변경사항 확인
+          git diff kustomization.yaml
+          
+          # Git 설정
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 변경사항이 있을 경우에만 커밋
+          if git diff --quiet kustomization.yaml; then
+            echo "No changes to kustomization.yaml"
+          else
+            git add kustomization.yaml
+            git commit -m "chore(k8s): Update backend image to sha-${SHORT_SHA} [skip ci]"
+            git push
+          fi
 
   frontend:
     name: frontend build and publish
@@ -141,3 +170,33 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/pms-frontend:${{ steps.tags.outputs.sha_tag }}
             ghcr.io/${{ github.repository_owner }}/pms-frontend:${{ steps.tags.outputs.develop_tag }}
+
+      # 🆕 Kustomization 자동 업데이트
+      - name: Update Kustomization with frontend image tag
+        shell: bash
+        run: |
+          cd k8s/overlays/dev
+          
+          # 현재 SHA 추출
+          SHORT_SHA="${GITHUB_SHA::7}"
+          
+          # frontend 이미지 태그 업데이트
+          sed -i.bak "/name: ghcr.io\/gitsmyun\/pms-frontend/,/newTag:/ s|newTag: .*|newTag: sha-${SHORT_SHA}|" kustomization.yaml
+          rm -f kustomization.yaml.bak
+          
+          # 변경사항 확인
+          git diff kustomization.yaml
+          
+          # Git 설정
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 변경사항이 있을 경우에만 커밋
+          if git diff --quiet kustomization.yaml; then
+            echo "No changes to kustomization.yaml"
+          else
+            git add kustomization.yaml
+            git commit -m "chore(k8s): Update frontend image to sha-${SHORT_SHA} [skip ci]"
+            git push
+          fi
+

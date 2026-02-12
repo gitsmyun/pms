@@ -5,4 +5,11 @@ namespace: pms-dev
 
 resources:
 - ../../base
+- keycloak-db-secret.yaml  # Keycloak PostgreSQL DB Secret (2026-02-09)
 
+# 🆕 이미지 태그 오버라이드 (GitHub Actions가 자동 업데이트)
+images:
+- name: ghcr.io/gitsmyun/pms-backend
+  newTag: sha-4b72dc0  # ← 초기값 (현재 커밋)
+- name: ghcr.io/gitsmyun/pms-frontend
+  newTag: sha-4b72dc0  # ← 초기값 (현재 커밋)

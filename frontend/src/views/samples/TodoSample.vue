@@ -3,7 +3,7 @@
     <!-- 페이지 헤더 -->
     <div class="page-header">
       <div class="page-title-wrapper">
-        <h1 class="text-h2">금일 TODO 승인 관리</h1>
+        <h1 class="text-h2">금일 TODO 승인 관리 test</h1>
         <span class="badge badge-pill badge-primary ml-3">{{ todayDate }}</span>
       </div>
       <div class="flex gap-2 items-center">

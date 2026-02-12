@@ -35,6 +35,21 @@ public class ProjectController {
         return projectService.findAll().stream().map(ProjectResponse::from).toList();
     }
 
+    /**
+     * 배포 버전 확인용 디버깅 엔드포인트
+     * @since 2026-02-12
+     */
+    @GetMapping("/api/health/version")
+    public VersionResponse getVersion() {
+        return new VersionResponse(
+            "1.0.0",
+            LocalDateTime.now().toString(),
+            "Auto-deployment test - Backend deployed successfully"
+        );
+    }
+
+    record VersionResponse(String version, String timestamp, String message) {}
+
     @PostMapping("/api/projects")
     @ResponseStatus(HttpStatus.CREATED)
     public ProjectResponse createProject(@Valid @RequestBody CreateProjectRequest request) {
