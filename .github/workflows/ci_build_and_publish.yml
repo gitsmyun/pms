@@ -83,6 +83,7 @@ jobs:
       # 🆕 Kustomization 자동 업데이트
       - name: Update Kustomization with backend image tag
         shell: bash
+        working-directory: .  # 루트 디렉토리로 재설정
         run: |
           cd k8s/overlays/dev
           
@@ -180,6 +181,7 @@ jobs:
       # 🆕 Kustomization 자동 업데이트
       - name: Update Kustomization with frontend image tag
         shell: bash
+        working-directory: .  # 루트 디렉토리 명시
         run: |
           cd k8s/overlays/dev
           
