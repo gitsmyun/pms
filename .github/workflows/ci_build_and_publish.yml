@@ -1,8 +1,11 @@
 name: ci build and publish
 
 # 작성일 2026 01 12
+# 수정일 2026 02 13 - 3-Job 구조로 리팩토링 (변경 감지 + 병렬 빌드 + Kustomization 분리)
 # 작업자 윤성민 책임
 # 설명 이 워크플로우는 PMS2의 CI 파이프라인으로 develop 브랜치 머지 시 백엔드와 프론트엔드를 빌드 테스트하고 도커 이미지를 GHCR에 푸시한다
+# 설명 변경 감지 기반으로 백엔드/프론트엔드를 조건부 병렬 실행하여 빌드 시간을 단축한다
+# 설명 Kustomization 업데이트는 별도 Job으로 분리하여 Git 충돌을 방지한다
 # 설명 dev 자동 배포 편의성을 위해 커밋 sha 태그와 함께 develop latest 고정 태그를 함께 발행한다
 # 설명 test prod 승격은 별도 승격 절차로 수행하며 본 워크플로우는 dev 배포를 위한 이미지 발행까지만 책임진다
 
@@ -24,18 +27,50 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backend:
-    name: backend build test and publish
+  # ============================================
+  # Job 1: 변경 감지
+  # ============================================
+  changes:
+    name: Detect changes
     runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Path filter
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle/**'
+              - 'gradlew'
+              - 'gradlew.bat'
+            frontend:
+              - 'frontend/**'
+
+  # ============================================
+  # Job 2: Backend 빌드 (조건부 실행)
+  # ============================================
+  backend:
+    name: Backend build test and publish
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.tags.outputs.sha_tag }}
     defaults:
       run:
         working-directory: backend/pms-backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 전체 히스토리 (Git push를 위해 필요)
-          token: ${{ secrets.PAT_TOKEN }}  # PAT으로 branch protection 우회
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -71,6 +106,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push backend image
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v6
         with:
           context: backend/pms-backend
@@ -80,46 +116,19 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/pms-backend:${{ steps.tags.outputs.sha_tag }}
             ghcr.io/${{ github.repository_owner }}/pms-backend:${{ steps.tags.outputs.develop_tag }}
 
-      # 🆕 Kustomization 자동 업데이트
-      - name: Update Kustomization with backend image tag
-        shell: bash
-        working-directory: .  # 루트 디렉토리로 재설정
-        run: |
-          cd k8s/overlays/dev
-          
-          # 현재 SHA 추출
-          SHORT_SHA="${GITHUB_SHA::7}"
-          
-          # backend 이미지 태그 업데이트
-          sed -i.bak "/name: ghcr.io\/gitsmyun\/pms-backend/,/newTag:/ s|newTag: .*|newTag: sha-${SHORT_SHA}|" kustomization.yaml
-          rm -f kustomization.yaml.bak
-          
-          # 변경사항 확인
-          git diff kustomization.yaml
-          
-          # Git 설정
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # 변경사항이 있을 경우에만 커밋
-          if git diff --quiet kustomization.yaml; then
-            echo "No changes to kustomization.yaml"
-          else
-            git add kustomization.yaml
-            git commit -m "chore(k8s): Update backend image to sha-${SHORT_SHA} [skip ci]"
-            git push
-          fi
-
+  # ============================================
+  # Job 3: Frontend 빌드 (조건부 실행, 병렬)
+  # ============================================
   frontend:
-    name: frontend build and publish
+    name: Frontend build and publish
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
-    needs: backend  # Backend job 완료 후 실행 (Git 충돌 방지)
+    outputs:
+      image_tag: ${{ steps.tags.outputs.sha_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 전체 히스토리 (Git push를 위해 필요)
-          token: ${{ secrets.PAT_TOKEN }}  # PAT으로 branch protection 우회
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -170,6 +179,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push frontend image
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v6
         with:
           context: frontend
@@ -179,36 +189,95 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/pms-frontend:${{ steps.tags.outputs.sha_tag }}
             ghcr.io/${{ github.repository_owner }}/pms-frontend:${{ steps.tags.outputs.develop_tag }}
 
-      # 🆕 Kustomization 자동 업데이트
-      - name: Update Kustomization with frontend image tag
-        shell: bash
-        working-directory: .  # 루트 디렉토리 명시
+  # ============================================
+  # Job 4: Kustomization 업데이트 (단일 Job)
+  # ============================================
+  update-kustomization:
+    name: Update Kustomization
+    needs: [changes, backend, frontend]
+    # PR에서는 실행하지 않음, push 또는 workflow_dispatch만
+    # backend 또는 frontend 중 하나라도 성공하면 실행
+    if: |
+      always() && 
+      github.event_name != 'pull_request' &&
+      (needs.backend.result == 'success' || needs.frontend.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Pull latest changes
         run: |
-          # Backend의 변경사항 가져오기
-          git pull --rebase origin develop
-          
+          git pull --rebase origin develop || true
+
+      - name: Update image tags
+        env:
+          BACKEND_TAG: ${{ needs.backend.outputs.image_tag || '' }}
+          FRONTEND_TAG: ${{ needs.frontend.outputs.image_tag || '' }}
+        run: |
           cd k8s/overlays/dev
           
-          # 현재 SHA 추출
-          SHORT_SHA="${GITHUB_SHA::7}"
+          UPDATED=false
+          COMMIT_MSG="chore(k8s): Update image tags"
           
-          # frontend 이미지 태그 업데이트
-          sed -i.bak "/name: ghcr.io\/gitsmyun\/pms-frontend/,/newTag:/ s|newTag: .*|newTag: sha-${SHORT_SHA}|" kustomization.yaml
+          # Backend 태그 업데이트
+          if [ -n "${BACKEND_TAG:-}" ] && [ "${BACKEND_TAG:-}" != "" ]; then
+            echo "✅ Updating backend tag to $BACKEND_TAG"
+            sed -i.bak "/name: ghcr.io\/gitsmyun\/pms-backend/,/newTag:/ s|newTag: .*|newTag: $BACKEND_TAG|" kustomization.yaml
+            COMMIT_MSG="$COMMIT_MSG backend=$BACKEND_TAG"
+            UPDATED=true
+          else
+            echo "⏭️ Backend tag update skipped (not changed or failed)"
+          fi
+          
+          # Frontend 태그 업데이트
+          if [ -n "${FRONTEND_TAG:-}" ] && [ "${FRONTEND_TAG:-}" != "" ]; then
+            echo "✅ Updating frontend tag to $FRONTEND_TAG"
+            sed -i.bak "/name: ghcr.io\/gitsmyun\/pms-frontend/,/newTag:/ s|newTag: .*|newTag: $FRONTEND_TAG|" kustomization.yaml
+            COMMIT_MSG="$COMMIT_MSG frontend=$FRONTEND_TAG"
+            UPDATED=true
+          else
+            echo "⏭️ Frontend tag update skipped (not changed or failed)"
+          fi
+          
+          # 백업 파일 삭제
           rm -f kustomization.yaml.bak
           
-          # 변경사항 확인
-          git diff kustomization.yaml
-          
-          # Git 설정
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # 변경사항이 있을 경우에만 커밋
-          if git diff --quiet kustomization.yaml; then
-            echo "No changes to kustomization.yaml"
-          else
+          # 변경사항 커밋
+          if [ "$UPDATED" = true ]; then
+            echo "📝 Committing changes..."
+            
+            # 변경 내용 확인
+            echo "=== Changed content ==="
+            cat kustomization.yaml
+            echo "======================"
+            
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            
             git add kustomization.yaml
-            git commit -m "chore(k8s): Update frontend image to sha-${SHORT_SHA} [skip ci]"
-            git push
+            git commit -m "$COMMIT_MSG [skip ci]"
+            
+            # Push with retry
+            for i in 1 2 3; do
+              if git push origin develop; then
+                echo "✅ Push successful"
+                break
+              else
+                echo "⚠️ Push failed, retrying... ($i/3)"
+                git pull --rebase origin develop
+                sleep 2
+              fi
+            done
+          else
+            echo "ℹ️ No updates needed"
           fi
 
+      - name: Verify kustomization
+        run: |
+          echo "=== Final kustomization.yaml ==="
+          cat k8s/overlays/dev/kustomization.yaml
